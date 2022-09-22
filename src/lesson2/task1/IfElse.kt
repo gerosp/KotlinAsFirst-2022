@@ -71,24 +71,20 @@ fun minBiRoot(a: Double, b: Double, c: Double): Double {
  */
 fun ageDescription(age: Int): String {
     val ageName: String
-    when {
+    ageName = when {
         (age % 100 in 11..19) -> {
-            ageName = "лет"
+            "лет"
+        }
+        age % 10 == 1 -> {
+            "год"
+        }
+        (age % 10 in 2..4) -> {
+            "года"
         }
         else -> {
-            if (age % 10 == 1) {
-                ageName = "год"
-
-            } else if (age % 10 in 2..4) {
-                ageName = "года"
-            } else {
-                ageName = "лет"
-            }
+            "лет"
         }
-
-
     }
-
     return age.toString() + " " + ageName
 }
 
@@ -105,15 +101,15 @@ fun timeForHalfWay(
     t3: Double, v3: Double
 ): Double {
     val pathLength = t1 * v1 + t2 * v2 + t3 * v3
-    when {
+    return when {
         pathLength / 2 < t1 * v1 -> {
-            return pathLength / 2 / v1
+            pathLength / 2 / v1
         }
         pathLength / 2 < t1 * v1 + t2 * v2 -> {
-            return (pathLength / 2 - t1 * v1) / v2 + t1
+            (pathLength / 2 - t1 * v1) / v2 + t1
         }
         else -> {
-            return (pathLength / 2 - t1 * v1 - t2 * v2) / v3 + t1 + t2
+            (pathLength / 2 - t1 * v1 - t2 * v2) / v3 + t1 + t2
         }
 
     }
@@ -219,4 +215,4 @@ fun triangleKind(a: Double, b: Double, c: Double): Int {
  * Найти длину пересечения отрезков AB и CD.
  * Если пересечения нет, вернуть -1.
  */
-fun segmentLength(a: Int, b: Int, c: Int, d: Int): Int =TODO()
+fun segmentLength(a: Int, b: Int, c: Int, d: Int): Int = TODO()
