@@ -4,6 +4,7 @@ package lesson2.task2
 
 import lesson1.task1.sqr
 import kotlin.math.abs
+
 /**
  * Пример
  *
@@ -41,20 +42,19 @@ fun queenThreatens(x1: Int, y1: Int, x2: Int, y2: Int): Boolean =
  * Вернуть число дней в этом месяце этого года по григорианскому календарю.
  */
 fun daysInMonth(month: Int, year: Int): Int {
-    when {
+    return when {
         month != 2 -> {
             if ((month % 2 == 1 && month < 8) || (month % 2 == 0 && month >= 8)) {
-                return 31
-
+                31
             } else {
-                return 30
+                30
             }
         }
         else -> {
             if ((year % 4 == 0 && year % 100 != 0) || (year % 4 == 0 && year % 100 == 0 && year % 400 == 0)) {
-                return 29
+                29
             } else {
-                return 28
+                28
             }
         }
     }
