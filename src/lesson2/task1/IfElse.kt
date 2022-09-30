@@ -147,19 +147,19 @@ fun rookOrBishopThreatens(
     rookX: Int, rookY: Int,
     bishopX: Int, bishopY: Int
 ): Int {
-    when {
+    return when {
         ((kingX == rookX) || (kingY == rookY)) &&
                 !(kotlin.math.abs(kingX - bishopX) ==
-                        kotlin.math.abs(kingY - bishopY)) -> return 1
+                        kotlin.math.abs(kingY - bishopY)) -> 1
 
         (kotlin.math.abs(kingX - bishopX) ==
                 kotlin.math.abs(kingY - bishopY)) &&
-                !((kingX == rookX) || (kingY == rookY)) -> return 2
+                !((kingX == rookX) || (kingY == rookY)) -> 2
 
         ((kingX == rookX) || (kingY == rookY)) &&
                 (kotlin.math.abs(kingX - bishopX) ==
-                        kotlin.math.abs(kingY - bishopY)) -> return 3
-        else -> return 0
+                        kotlin.math.abs(kingY - bishopY)) -> 3
+        else -> 0
     }
 }
 
