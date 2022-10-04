@@ -202,6 +202,7 @@ fun segmentLength(a: Int, b: Int, c: Int, d: Int): Int {
     val totalLength = arrayOf(a, b, c, d).sorted()[3] - arrayOf(a, b, c, d).sorted()[0]
     var intersectionLength = 0
     when {
+        a == c && b == d -> intersectionLength = abs(b - a)
         a > d || c > b -> {
             intersectionLength = -1
         }
