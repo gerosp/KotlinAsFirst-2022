@@ -120,17 +120,17 @@ fun whichRookThreatens(
     kingX: Int, kingY: Int,
     rookX1: Int, rookY1: Int,
     rookX2: Int, rookY2: Int
-): Int {
+): Int =
     when {
         ((kingX == rookX1) || (kingY == rookY1)) &&
-                !((kingX == rookX2) || (kingY == rookY2)) -> return 1
+                !((kingX == rookX2) || (kingY == rookY2)) -> 1
         ((kingX == rookX2) || (kingY == rookY2)) &&
-                !((kingX == rookX1) || (kingY == rookY1)) -> return 2
+                !((kingX == rookX1) || (kingY == rookY1)) -> 2
         ((kingX == rookX1) || (kingY == rookY1)) &&
-                ((kingX == rookX2) || (kingY == rookY2)) -> return 3
-        else -> return 0
+                ((kingX == rookX2) || (kingY == rookY2)) -> 3
+        else -> 0
     }
-}
+
 
 /**
  * Простая (2 балла)
@@ -146,8 +146,8 @@ fun rookOrBishopThreatens(
     kingX: Int, kingY: Int,
     rookX: Int, rookY: Int,
     bishopX: Int, bishopY: Int
-): Int {
-    return when {
+): Int =
+    when {
         ((kingX == rookX) || (kingY == rookY)) &&
                 !(kotlin.math.abs(kingX - bishopX) ==
                         kotlin.math.abs(kingY - bishopY)) -> 1
@@ -161,7 +161,7 @@ fun rookOrBishopThreatens(
                         kotlin.math.abs(kingY - bishopY)) -> 3
         else -> 0
     }
-}
+
 
 /**
  * Простая (2 балла)
@@ -173,29 +173,21 @@ fun rookOrBishopThreatens(
  */
 fun triangleKind(a: Double, b: Double, c: Double): Int {
     val sides = arrayOf(a, b, c).sorted()
-
-    when {
+    return when {
         ((a > b + c) || (b > a + c) || (c > a + b)) -> {
-            return -1
-
+            -1
         }
-
         sides[2] * sides[2] < sides[0] * sides[0] + sides[1] * sides[1] -> {
-            return 0
-
+            0
         }
         sides[2] * sides[2] == sides[0] * sides[0] + sides[1] * sides[1] -> {
-            return 1
-
+            1
         }
-
         sides[2] * sides[2] > sides[0] * sides[0] + sides[1] * sides[1] -> {
-            return 2
-
+            2
         }
-
+        else -> -1
     }
-    return -2
 }
 
 /**
@@ -206,4 +198,25 @@ fun triangleKind(a: Double, b: Double, c: Double): Int {
  * Найти длину пересечения отрезков AB и CD.
  * Если пересечения нет, вернуть -1.
  */
-fun segmentLength(a: Int, b: Int, c: Int, d: Int): Int = TODO()
+fun segmentLength(a: Int, b: Int, c: Int, d: Int): Int {
+    val totalLength = arrayOf(a, b, c, d).sorted()[3] - arrayOf(a, b, c, d).sorted()[0]
+    var intersectionLength = 0
+    when {
+        a > d || c > b -> {
+            intersectionLength = -1
+        }
+        b > d && d > a && a > c -> { // C - A - D - B
+            intersectionLength = d - a
+        }
+        b < d && b > a && a > c -> { //C - A - B - D
+            intersectionLength = b - a
+        }
+        d > b && b > c && c > a -> { // A - C - B - D
+            intersectionLength = b - c
+        }
+        b > d && d > c && c > a -> { // A  - C - D - B
+            intersectionLength = d - c
+        }
+    }
+    return intersectionLength
+}
