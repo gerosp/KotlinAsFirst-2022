@@ -75,7 +75,7 @@ fun digitCountInNumber(n: Int, m: Int): Int =
  * Использовать операции со строками в этой задаче запрещается.
  */
 fun digitNumber(n: Int): Int {
-    var number = n
+    var number = kotlin.math.abs(n)
     var numberLength = 0
     while (number > 0) {
         number /= 10
@@ -137,7 +137,7 @@ fun minDivisor(n: Int): Int {
  */
 fun maxDivisor(n: Int): Int {
     var divisor = n / 2 + 1
-    while (n % divisor != 0 && n >= 1) {
+    while (n % divisor != 0 && n >= 1 || divisor >= n) {
         divisor--
     }
 
