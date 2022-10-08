@@ -297,19 +297,7 @@ fun fact(n: Int): Int { // Может понадобиться Long
     return m
 }
 
-fun sin(x: Double, eps: Double): Double {
-    println("new test")
-    var sinx = x
-    var i = 3
-    var sign = false
-    while (kotlin.math.abs(x.pow(i) / fact(i)) >= eps) {
-        sinx += x.pow(i) / fact(i) * if (sign) 1 else -1
-        i += 2
-        println(fact(i))
-        sign = !sign
-    }
-    return sinx
-}
+fun sin(x: Double, eps: Double): Double = TODO()
 
 /**
  * Средняя (4 балла)
