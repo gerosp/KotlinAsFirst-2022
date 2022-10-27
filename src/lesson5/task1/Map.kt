@@ -1,6 +1,11 @@
-@file:Suppress("UNUSED_PARAMETER", "ConvertCallChainIntoSequence")
+@file:Suppress("UN USED_PARAMETER", "ConvertCallChainIntoSequence")
 
 package lesson5.task1
+
+import java.util.LinkedList
+import java.util.Queue
+import java.util.StringJoiner
+
 
 // Урок 5: ассоциативные массивы и множества
 // Максимальное количество баллов = 14
@@ -96,7 +101,19 @@ fun buildWordSet(text: List<String>): MutableSet<String> {
  *   buildGrades(mapOf("Марат" to 3, "Семён" to 5, "Михаил" to 5))
  *     -> mapOf(5 to listOf("Семён", "Михаил"), 3 to listOf("Марат"))
  */
-fun buildGrades(grades: Map<String, Int>): Map<Int, List<String>> = TODO()
+fun buildGrades(grades: Map<String, Int>): Map<Int, List<String>> {
+    val studentsByGrades: MutableMap<Int, List<String>> = mutableMapOf<Int, List<String>>()
+
+    for (i in grades.keys) {
+        if (grades[i] !in studentsByGrades.keys) {
+            studentsByGrades[grades[i]!!] = mutableListOf<String>(i)
+        } else {
+            studentsByGrades[grades[i]!!] = studentsByGrades[grades[i]]!! + i
+        }
+    }
+
+    return studentsByGrades
+}
 
 /**
  * Простая (2 балла)
@@ -108,7 +125,21 @@ fun buildGrades(grades: Map<String, Int>): Map<Int, List<String>> = TODO()
  *   containsIn(mapOf("a" to "z"), mapOf("a" to "z", "b" to "sweet")) -> true
  *   containsIn(mapOf("a" to "z"), mapOf("a" to "zee", "b" to "sweet")) -> false
  */
-fun containsIn(a: Map<String, String>, b: Map<String, String>): Boolean = TODO()
+fun containsIn(a: Map<String, String>, b: Map<String, String>): Boolean {
+    var flag = true
+    for (i in a.keys) {
+        if (i in b.keys) {
+            if (a[i] != b[i]) {
+                flag = false
+                break
+            }
+        } else {
+            flag = false
+            break
+        }
+    }
+    return flag
+}
 
 /**
  * Простая (2 балла)
@@ -125,7 +156,16 @@ fun containsIn(a: Map<String, String>, b: Map<String, String>): Boolean = TODO()
  *     -> a changes to mutableMapOf() aka becomes empty
  */
 fun subtractOf(a: MutableMap<String, String>, b: Map<String, String>) {
-    TODO()
+    val keysToRemove = mutableListOf<String>()
+
+    for (i in a.keys) {
+        if (i in b.keys && a[i] == b[i]) {
+            keysToRemove.add(i)
+        }
+    }
+    for (i in keysToRemove) {
+        a.remove(i)
+    }
 }
 
 /**
@@ -135,7 +175,15 @@ fun subtractOf(a: MutableMap<String, String>, b: Map<String, String>) {
  * В выходном списке не должно быть повторяющихся элементов,
  * т. е. whoAreInBoth(listOf("Марат", "Семён, "Марат"), listOf("Марат", "Марат")) == listOf("Марат")
  */
-fun whoAreInBoth(a: List<String>, b: List<String>): List<String> = TODO()
+fun whoAreInBoth(a: List<String>, b: List<String>): List<String> {
+    val intersection = mutableListOf<String>()
+    for (i in a) {
+        if (i in b && i !in intersection) {
+            intersection.add(i)
+        }
+    }
+    return intersection
+}
 
 /**
  * Средняя (3 балла)
@@ -154,7 +202,19 @@ fun whoAreInBoth(a: List<String>, b: List<String>): List<String> = TODO()
  *     mapOf("Emergency" to "911", "Police" to "02")
  *   ) -> mapOf("Emergency" to "112, 911", "Police" to "02")
  */
-fun mergePhoneBooks(mapA: Map<String, String>, mapB: Map<String, String>): Map<String, String> = TODO()
+fun mergePhoneBooks(mapA: Map<String, String>, mapB: Map<String, String>): Map<String, String> {
+    val mergedMap = mutableMapOf<String, String>()
+    mergedMap.putAll(mapA)
+    for (i in mapB.keys) {
+        if (i in mergedMap.keys && mergedMap[i] != mapB[i]) {
+            mergedMap[i] += ", " + mapB[i]
+        } else {
+            mergedMap[i] = mapB[i]!!
+        }
+    }
+
+    return mergedMap
+}
 
 /**
  * Средняя (4 балла)
@@ -166,7 +226,23 @@ fun mergePhoneBooks(mapA: Map<String, String>, mapB: Map<String, String>): Map<S
  *   averageStockPrice(listOf("MSFT" to 100.0, "MSFT" to 200.0, "NFLX" to 40.0))
  *     -> mapOf("MSFT" to 150.0, "NFLX" to 40.0)
  */
-fun averageStockPrice(stockPrices: List<Pair<String, Double>>): Map<String, Double> = TODO()
+fun averageStockPrice(stockPrices: List<Pair<String, Double>>): Map<String, Double> {
+    val averagePrices = mutableMapOf<String, Double>()
+    val pricesPerStock = mutableMapOf<String, List<Double>>()
+    for ((first, second) in stockPrices) {
+        if (first !in pricesPerStock.keys) {
+            pricesPerStock[first] = mutableListOf(second)
+        } else {
+            pricesPerStock[first] = pricesPerStock[first]!! + second
+        }
+    }
+    for (i in pricesPerStock.keys) {
+        averagePrices[i] =
+            if (pricesPerStock[i]!!.isNotEmpty()) pricesPerStock[i]!!.reduce() { a, b -> a + b } / pricesPerStock[i]!!.size else 0.0
+    }
+
+    return averagePrices
+}
 
 /**
  * Средняя (4 балла)
@@ -183,7 +259,17 @@ fun averageStockPrice(stockPrices: List<Pair<String, Double>>): Map<String, Doub
  *     "печенье"
  *   ) -> "Мария"
  */
-fun findCheapestStuff(stuff: Map<String, Pair<String, Double>>, kind: String): String? = TODO()
+fun findCheapestStuff(stuff: Map<String, Pair<String, Double>>, kind: String): String? {
+    var bestSeller = "null"
+    var lowestPrice = Double.MAX_VALUE
+    for (i in stuff.keys) {
+        if (stuff[i]?.first == kind && stuff[i]?.second!! < lowestPrice) {
+            bestSeller = i
+            lowestPrice = stuff[i]?.second!!
+        }
+    }
+    return if (bestSeller != "null") bestSeller else null
+}
 
 /**
  * Средняя (3 балла)
@@ -194,7 +280,15 @@ fun findCheapestStuff(stuff: Map<String, Pair<String, Double>>, kind: String): S
  * Например:
  *   canBuildFrom(listOf('a', 'b', 'o'), "baobab") -> true
  */
-fun canBuildFrom(chars: List<Char>, word: String): Boolean = TODO()
+fun canBuildFrom(chars: List<Char>, word: String): Boolean {
+    var flag = true
+    for (letter in word) {
+        if (letter !in chars) {
+            flag = false
+        }
+    }
+    return flag
+}
 
 /**
  * Средняя (4 балла)
@@ -208,7 +302,26 @@ fun canBuildFrom(chars: List<Char>, word: String): Boolean = TODO()
  * Например:
  *   extractRepeats(listOf("a", "b", "a")) -> mapOf("a" to 2)
  */
-fun extractRepeats(list: List<String>): Map<String, Int> = TODO()
+fun extractRepeats(list: List<String>): Map<String, Int> {
+    val chars = mutableMapOf<String, Int>()
+    for (i in list) {
+        if (i in chars.keys) {
+            chars[i] = chars[i]!! + 1
+        } else {
+            chars[i] = 1
+        }
+    }
+    val valuesToRemove = mutableListOf<String>()
+    for (i in chars.keys) {
+        if (chars[i] == 1) {
+            valuesToRemove.add(i)
+        }
+    }
+    for (i in valuesToRemove) {
+        chars.remove(i)
+    }
+    return chars
+}
 
 /**
  * Средняя (3 балла)
@@ -222,7 +335,19 @@ fun extractRepeats(list: List<String>): Map<String, Int> = TODO()
  * Например:
  *   hasAnagrams(listOf("тор", "свет", "рот")) -> true
  */
-fun hasAnagrams(words: List<String>): Boolean = TODO()
+fun hasAnagrams(words: List<String>): Boolean {
+    val sets = mutableListOf<List<Char>>()
+    var flag = false
+    for (i in words) {
+        if (i.toCharArray().sorted() !in sets) {
+            sets.add(i.toCharArray().sorted())
+        } else {
+            flag = true
+            break
+        }
+    }
+    return flag
+}
 
 /**
  * Сложная (5 баллов)
@@ -258,7 +383,49 @@ fun hasAnagrams(words: List<String>): Boolean = TODO()
  *          "GoodGnome" to setOf()
  *        )
  */
-fun propagateHandshakes(friends: Map<String, Set<String>>): Map<String, Set<String>> = TODO()
+fun propagateHandshakes(friends: Map<String, Set<String>>): Map<String, Set<String>> {
+    val propagatedGraph = mutableMapOf<String, Set<String>>()
+    propagatedGraph.putAll(friends)
+    println(propagatedGraph)
+    val visitedNodes = mutableListOf<String>()
+    val q: Queue<String> = LinkedList<String>(listOf())
+    q.add(friends.keys.first())
+    var current: String
+
+    while (q.isNotEmpty()) {
+        current = q.poll()
+
+        println(current)
+        if (current in friends) {
+            for (node in friends[current]!!) {
+                if (node !in visitedNodes && node !in q) {
+
+                    q.add(node)
+                    for (visitedNode in visitedNodes) {
+                        if (node !in propagatedGraph[visitedNode]!! && node != visitedNode) {
+                            propagatedGraph[visitedNode] = propagatedGraph[visitedNode]!! + node
+                        }
+                    }
+
+
+                    visitedNodes.add(current)
+                } else {
+                    for (visitedNode in visitedNodes) {
+                        if (node !in propagatedGraph[visitedNode]!! && node != visitedNode) {
+                            propagatedGraph[visitedNode] = propagatedGraph[visitedNode]!! + node
+                        }
+                    }
+                }
+
+            }
+        } else {
+            propagatedGraph[current] = setOf()
+        }
+    }
+
+
+    return propagatedGraph
+}
 
 /**
  * Сложная (6 баллов)

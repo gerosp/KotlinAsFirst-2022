@@ -5,6 +5,7 @@ package lesson3.task1
 import kotlin.math.pow
 import kotlin.math.roundToInt
 import kotlin.math.sqrt
+import kotlin.math.abs
 
 // Урок 3: циклы
 // Максимальное количество баллов = 9
@@ -75,7 +76,7 @@ fun digitCountInNumber(n: Int, m: Int): Int =
  * Использовать операции со строками в этой задаче запрещается.
  */
 fun digitNumber(n: Int): Int {
-    var number = kotlin.math.abs(n)
+    var number = abs(n)
     var numberLength = 0
     while (number > 0) {
         number /= 10
@@ -97,17 +98,17 @@ fun digitNumber(n: Int): Int {
 val hm = HashMap<Int, Int>()
 fun fib(n: Int): Int {
 
-    when (n) {
-        in hm.keys -> return hm[n]!!
+    return when (n) {
+        in hm.keys -> hm[n]!!
 
-        0 -> return 0
-        1 -> return 1
-        2 -> return 1
+        0 -> 0
+        1 -> 1
+        2 -> 1
 
         else -> {
             val nRes = fib(n - 2) + fib(n - 1)
             hm[n] = nRes
-            return nRes
+            nRes
         }
     }
 
@@ -161,10 +162,10 @@ fun maxDivisor(n: Int): Int {
  * этого для какого-либо начального X > 0.
  */
 fun collatzSteps(x: Int): Int {
-    when {
-        x == 1 -> return 0
-        x % 2 == 0 -> return collatzSteps(x / 2) + 1
-        else -> return collatzSteps(3 * x + 1) + 1
+    return when {
+        x == 1 -> 0
+        x % 2 == 0 -> collatzSteps(x / 2) + 1
+        else -> collatzSteps(3 * x + 1) + 1
     }
 }
 
@@ -174,8 +175,7 @@ fun collatzSteps(x: Int): Int {
  * Для заданных чисел m и n найти наименьшее общее кратное, то есть,
  * минимальное число k, которое делится и на m и на n без остатка
  */
-fun lcm(m: Int, n: Int): Int {
-    val gcd: Int
+fun gcd(m: Int, n: Int): Int {
     var a = m
     var b = n
     while (a != 0 && b != 0) {
@@ -185,10 +185,11 @@ fun lcm(m: Int, n: Int): Int {
             b %= a
         }
     }
-    gcd = a + b
-
-    return n * m / gcd
+    return a + b
 }
+
+fun lcm(m: Int, n: Int): Int = n * m / gcd(m, n)
+
 
 /**
  * Средняя (3 балла)
@@ -197,20 +198,8 @@ fun lcm(m: Int, n: Int): Int {
  * Взаимно простые числа не имеют общих делителей, кроме 1.
  * Например, 25 и 49 взаимно простые, а 6 и 8 -- нет.
  */
-fun isCoPrime(m: Int, n: Int): Boolean {
-    val gcd: Int
-    var a = m
-    var b = n
-    while (a != 0 && b != 0) {
-        if (a > b) {
-            a %= b
-        } else {
-            b %= a
-        }
-    }
-    gcd = a + b
-    return gcd == 1
-}
+fun isCoPrime(m: Int, n: Int): Boolean = gcd(m, n) == 1
+
 
 /**
  * Средняя (3 балла)
@@ -219,21 +208,21 @@ fun isCoPrime(m: Int, n: Int): Boolean {
  *
  * Использовать операции со строками в этой задаче запрещается.
  */
+
 fun revert(n: Int): Int {
-    val numbers = mutableListOf<Int>()
     var m = n
+    var c = 0
+    var length = 0
     while (m > 0) {
-        numbers.add(m % 10)
+        length += 1
         m /= 10
     }
-    numbers.reverse()
-    m = 0
-    var exp = 1
-    for (i in numbers) {
-        m += i * exp
-        exp *= 10
+    m = n
+    for (i in 0 until length) {
+        c += (m % 10 * 10.0.pow((length - 1 - i))).toInt()
+        m /= 10
     }
-    return m
+    return c
 }
 
 /**
@@ -245,22 +234,8 @@ fun revert(n: Int): Int {
  *
  * Использовать операции со строками в этой задаче запрещается.
  */
-fun isPalindrome(n: Int): Boolean {
-    val numbers = mutableListOf<Int>()
-    var m = n
-    while (m > 0) {
-        numbers.add(m % 10)
-        m /= 10
-    }
-    if (numbers.size % 2 == 0) {
-        return numbers.slice(0..numbers.size / 2 - 1) ==
-                numbers.slice(numbers.size / 2..numbers.size - 1).reversed()
-    } else {
-        return numbers.slice(0..(numbers.size - 1) / 2) ==
-                numbers.slice((numbers.size - 1) / 2..numbers.size - 1)
-                    .reversed()
-    }
-}
+
+fun isPalindrome(n: Int): Boolean = n == revert(n)
 
 /**
  * Средняя (3 балла)
@@ -297,7 +272,22 @@ fun fact(n: Int): Int { // Может понадобиться Long
     return m
 }
 
-fun sin(x: Double, eps: Double): Double = TODO()
+fun sin(x: Double, eps: Double): Double {
+
+    var sinx = x
+    sinx = (x % (2 * kotlin.math.PI))
+    var i = 3
+    var sign = false
+    while (kotlin.math.abs((x % (2 * kotlin.math.PI)).pow(i) / fact(i)) >= eps) {
+        sinx += (x % (2 * kotlin.math.PI)).pow(i) / fact(i) * if (sign) 1 else -1
+        i += 2
+        //println(x % (2 * kotlin.math.PI))
+        println(fact(i))
+        println(kotlin.math.abs((x % (2 * kotlin.math.PI)).pow(i) / fact(i)))
+        sign = !sign
+    }
+    return sinx
+}
 
 /**
  * Средняя (4 балла)
@@ -326,12 +316,11 @@ fun squareSequenceDigit(n: Int): Int {
     while (current < n) {
         i++
         current += digitNumber(i * i)
-
     }
-    if (current == n) {
-        return i * i % 10
+    return if (current == n) {
+        i * i % 10
     } else {
-        return (i * i / (10.toDouble().pow(current - n)).toInt()) % 10
+        (i * i / (10.toDouble().pow(current - n)).toInt()) % 10
     }
 
 }
