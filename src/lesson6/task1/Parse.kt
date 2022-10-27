@@ -207,7 +207,7 @@ fun mostExpensive(description: String): String {
 fun fromRoman(roman: String): Int {
     var n = 0
     if (roman == "") return -1
-    var reverseRomanTable = mutableMapOf<String, Int>()
+    val reverseRomanTable = mutableMapOf<String, Int>()
     val romanTable = mapOf(
         0 to "",
         1 to "I",
