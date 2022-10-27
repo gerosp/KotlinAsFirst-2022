@@ -272,23 +272,7 @@ fun fact(n: Int): Int { // Может понадобиться Long
     return m
 }
 
-fun sin(x: Double, eps: Double): Double {
-
-    var sinx = x
-    sinx = (x % (2 * kotlin.math.PI))
-    var i = 3
-    var sign = false
-    while (kotlin.math.abs((x % (2 * kotlin.math.PI)).pow(i) / fact(i)) >= eps) {
-        sinx += (x % (2 * kotlin.math.PI)).pow(i) / fact(i) * if (sign) 1 else -1
-        i += 2
-        //println(x % (2 * kotlin.math.PI))
-        println(fact(i))
-        println(kotlin.math.abs((x % (2 * kotlin.math.PI)).pow(i) / fact(i)))
-        sign = !sign
-    }
-    return sinx
-}
-
+fun sin(x: Double, eps: Double): Double =TODO()
 /**
  * Средняя (4 балла)
  *
