@@ -167,12 +167,13 @@ fun firstDuplicateIndex(str: String): Int = TODO()
  */
 fun mostExpensive(description: String): String {
     var mostExpensiveItem = ""
-    var maxPrice = Double.MIN_VALUE
+    var maxPrice = -Double.MIN_VALUE
     if (description == "") return ""
-    if (description.split("; ").isNotEmpty()) {// А надо ли это проверять?
+    if (description.split("; ").isNotEmpty()) {
         for (i in description.split("; ")) {
             if (i.split(" ").size == 2) {
                 if (i.split(" ")[1].all { it.isDigit() || it == '.' }) {
+                    println(i.split(" ")[1].toDouble())
                     if (i.split(" ")[1].toDouble() > maxPrice) {
                         maxPrice = i.split(" ")[1].toDouble()
                         mostExpensiveItem = i.split(" ")[0]
@@ -205,6 +206,7 @@ fun mostExpensive(description: String): String {
  */
 fun fromRoman(roman: String): Int {
     var n = 0
+    if (roman == "") return -1
     var reverseRomanTable = mutableMapOf<String, Int>()
     val romanTable = mapOf(
         0 to "",
