@@ -383,49 +383,7 @@ fun hasAnagrams(words: List<String>): Boolean {
  *          "GoodGnome" to setOf()
  *        )
  */
-fun propagateHandshakes(friends: Map<String, Set<String>>): Map<String, Set<String>> {
-    val propagatedGraph = mutableMapOf<String, Set<String>>()
-    propagatedGraph.putAll(friends)
-    println(propagatedGraph)
-    val visitedNodes = mutableListOf<String>()
-    val q: Queue<String> = LinkedList<String>(listOf())
-    q.add(friends.keys.first())
-    var current: String
-
-    while (q.isNotEmpty()) {
-        current = q.poll()
-
-        println(current)
-        if (current in friends) {
-            for (node in friends[current]!!) {
-                if (node !in visitedNodes && node !in q) {
-
-                    q.add(node)
-                    for (visitedNode in visitedNodes) {
-                        if (node !in propagatedGraph[visitedNode]!! && node != visitedNode) {
-                            propagatedGraph[visitedNode] = propagatedGraph[visitedNode]!! + node
-                        }
-                    }
-
-
-                    visitedNodes.add(current)
-                } else {
-                    for (visitedNode in visitedNodes) {
-                        if (node !in propagatedGraph[visitedNode]!! && node != visitedNode) {
-                            propagatedGraph[visitedNode] = propagatedGraph[visitedNode]!! + node
-                        }
-                    }
-                }
-
-            }
-        } else {
-            propagatedGraph[current] = setOf()
-        }
-    }
-
-
-    return propagatedGraph
-}
+fun propagateHandshakes(friends: Map<String, Set<String>>): Map<String, Set<String>> = TODO()
 
 /**
  * Сложная (6 баллов)
