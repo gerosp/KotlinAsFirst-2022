@@ -201,24 +201,6 @@ fun accumulate(list: MutableList<Int>): MutableList<Int> {
  * Результат разложения вернуть в виде списка множителей, например 75 -> (3, 5, 5).
  * Множители в списке должны располагаться по возрастанию.
  */
-fun eratosthenes(upperLimit: Int): List<Int> {
-    val primeBoolList = MutableList<Boolean>(upperLimit + 1) { true }
-    val primeNumbers = mutableListOf<Int>()
-    var j = 1
-    for (i in 2..primeBoolList.size - 1) {
-        if (primeBoolList[i]) {
-            primeNumbers.add(i)
-            j = i
-            while (j + j < kotlin.math.sqrt(upperLimit.toDouble()).toInt() + 2) {
-                j += j
-                primeBoolList[j] = false
-
-            }
-        }
-    }
-
-    return primeNumbers
-}
 
 fun factorize(n: Int): List<Int> { // Алгоритм кольцевой факторизации
     var number = n
@@ -239,8 +221,8 @@ fun factorize(n: Int): List<Int> { // Алгоритм кольцевой фак
             dividers.add(k)
             number /= k
         }
-        i += 1
         k += inc[i % 7]
+        i += 1
     }
     if (number > 1) dividers.add(number)
     return dividers
@@ -254,28 +236,7 @@ fun factorize(n: Int): List<Int> { // Алгоритм кольцевой фак
  * Множители в результирующей строке должны располагаться по возрастанию.
  */
 fun factorizeToString(n: Int): String {
-    var number = n
-    val inc = listOf(4, 2, 4, 2, 4, 6, 2, 6)
-
-    val dividers = mutableListOf<Int>()
-    for (prime in arrayOf(2, 3, 5)) {
-        while (number % prime == 0) {
-            dividers.add(prime)
-            number /= prime
-        }
-    }
-    var k = 7;
-    var i = 0
-
-    while (k * k <= number) {
-        while (number % k == 0) {
-            dividers.add(k)
-            number /= k
-        }
-        k += inc[i % 7]
-        i += 1
-    }
-    if (number > 1) dividers.add(number)
+    val dividers = factorize(n)
     val dividersString = dividers.joinToString(separator = "") { it -> "$it*" }
     return dividersString.slice(0..dividersString.length - 2)
 }
