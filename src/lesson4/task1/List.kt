@@ -122,14 +122,14 @@ fun buildSumExample(list: List<Int>) = list.joinToString(separator = " + ", post
  * по формуле abs = sqrt(a1^2 + a2^2 + ... + aN^2).
  * Модуль пустого вектора считать равным 0.0.
  */
-fun abs(v: List<Double>): Double = if (v.isNotEmpty()) kotlin.math.sqrt(v.fold(0.0) { a, b -> a + b * b }) else 0.0
+fun abs(v: List<Double>): Double = sqrt(v.fold(0.0) { a, b -> a + b * b })
 
 /**
  * Простая (2 балла)
  *
  * Рассчитать среднее арифметическое элементов списка list. Вернуть 0.0, если список пуст
  */
-fun mean(list: List<Double>): Double = if (list.isNotEmpty()) list.reduce() { a, b -> a + b } / list.size else 0.0
+fun mean(list: List<Double>): Double = if (list.isNotEmpty()) list.sum() / list.size else 0.0
 
 /**
  * Средняя (3 балла)
@@ -200,7 +200,48 @@ fun accumulate(list: MutableList<Int>): MutableList<Int> {
  * Результат разложения вернуть в виде списка множителей, например 75 -> (3, 5, 5).
  * Множители в списке должны располагаться по возрастанию.
  */
-fun factorize(n: Int): List<Int> = TODO()
+fun eratosthenes(upperLimit: Int): List<Int> {
+    val primeBoolList = MutableList<Boolean>(kotlin.math.sqrt(upperLimit.toDouble()).toInt() + 2) { true }
+    val primeNumbers = mutableListOf<Int>()
+    var j = 1
+    for (i in 2..primeBoolList.size - 1) {
+        if (primeBoolList[i]) {
+            primeNumbers.add(i)
+            j = i
+            while (j + j < kotlin.math.sqrt(upperLimit.toDouble()).toInt() + 2) {
+                j += j
+                primeBoolList[j] = false
+
+            }
+        }
+    }
+
+    return primeNumbers
+}
+
+fun factorize(n: Int): List<Int> {
+    var number = n
+    val primeNumbers = eratosthenes(n)
+    var undividableByPrimeNumber = false
+    val dividers = mutableListOf<Int>()
+    while (undividableByPrimeNumber == false) {
+        for (i in primeNumbers.indices) {
+            if (number % primeNumbers[i] == 0) {
+                number /= primeNumbers[i]
+                dividers.add(primeNumbers[i])
+                break
+            }
+            if (i == primeNumbers.size - 1) {
+                undividableByPrimeNumber = true
+            }
+        }
+    }
+
+    return when {
+        dividers.isNotEmpty() -> dividers
+        else -> listOf(n)
+    }
+}
 
 /**
  * Сложная (4 балла)
@@ -209,7 +250,33 @@ fun factorize(n: Int): List<Int> = TODO()
  * Результат разложения вернуть в виде строки, например 75 -> 3*5*5
  * Множители в результирующей строке должны располагаться по возрастанию.
  */
-fun factorizeToString(n: Int): String = TODO()
+fun factorizeToString(n: Int): String {
+    var number = n
+    val primeNumbers = eratosthenes(n)
+    var undividableByPrimeNumber = false
+    val dividers = mutableListOf<Int>()
+    while (undividableByPrimeNumber == false) {
+        for (i in primeNumbers.indices) {
+            if (number % primeNumbers[i] == 0) {
+                number /= primeNumbers[i]
+                dividers.add(primeNumbers[i])
+                break
+            }
+            if (i == primeNumbers.size - 1) {
+                undividableByPrimeNumber = true
+            }
+        }
+    }
+    when {
+        dividers.isNotEmpty() -> {
+            val dividersString = dividers.joinToString(separator = "") { it -> "$it*" }
+            return dividersString.slice(0..dividersString.length - 2)
+        }
+        else -> {
+            return n.toString()
+        }
+    }
+}
 
 /**
  * Средняя (3 балла)
@@ -241,7 +308,24 @@ fun convert(n: Int, base: Int): List<Int> {
  * Использовать функции стандартной библиотеки, напрямую и полностью решающие данную задачу
  * (например, n.toString(base) и подобные), запрещается.
  */
-fun convertToString(n: Int, base: Int): String = TODO()
+fun convertToString(n: Int, base: Int): String {
+    val list = mutableListOf<Int>()
+    var number = n
+    while (number > 0) {
+        list.add(number % base)
+        number /= base
+    }
+    list.reverse()
+    var convertedNumber = ""
+    for (i in list) {
+        if (i < 10) {
+            convertedNumber += i.toString()
+        } else {
+            convertedNumber += (i + 87).toChar()
+        }
+    }
+    return convertedNumber
+}
 
 /**
  * Средняя (3 балла)
@@ -274,9 +358,9 @@ fun decimalFromString(str: String, base: Int): Int {
     val digits: MutableList<Int> = mutableListOf()
     for (i in str) {
         if (i.isDigit()) {
-            digits.add(i.code - 48)
+            digits.add(i.code - '0'.code)
         } else {
-            digits.add(i.code - 87)
+            digits.add(i.code - 'W'.code)
         }
     }
     var n = 0
@@ -294,7 +378,53 @@ fun decimalFromString(str: String, base: Int): Int {
  * 90 = XC, 100 = C, 400 = CD, 500 = D, 900 = CM, 1000 = M.
  * Например: 23 = XXIII, 44 = XLIV, 100 = C
  */
-fun roman(n: Int): String = TODO()
+
+
+fun roman(n: Int): String {
+    var number = n
+    val romanTable = mapOf(
+        0 to "",
+        1 to "I",
+        2 to "II",
+        3 to "III",
+        4 to "IV",
+        5 to "V",
+        6 to "VI",
+        7 to "VII",
+        8 to "VIII",
+        9 to "IX",
+        10 to "X",
+        20 to "XX",
+        30 to "XXX",
+        40 to "XL",
+        50 to "L",
+        60 to "LX",
+        70 to "LXX",
+        80 to "LXXX",
+        90 to "XC",
+        100 to "C",
+        200 to "CC",
+        300 to "CCC",
+        400 to "CD",
+        500 to "D",
+        600 to "DC",
+        700 to "DCC",
+        800 to "DCCC",
+        900 to "CM",
+        1000 to "M",
+        2000 to "MM",
+        3000 to "MMM",
+        4000 to "MMMM"
+    )
+    var processedDigits = 0
+    var romanNumber: String = ""
+    while (number > 0) {
+        romanNumber = romanTable[number % 10 * 10.toDouble().pow(processedDigits).toInt()]!! + romanNumber
+        number /= 10
+        processedDigits++
+    }
+    return romanNumber
+}
 
 /**
  * Очень сложная (7 баллов)
@@ -303,4 +433,128 @@ fun roman(n: Int): String = TODO()
  * Например, 375 = "триста семьдесят пять",
  * 23964 = "двадцать три тысячи девятьсот шестьдесят четыре"
  */
-fun russian(n: Int): String = TODO()
+fun russian(n: Int): String {
+    var numberInRussian: String = ""
+    val stringSize = n.toString().length
+    if (n == 0) return "ноль"
+    if (stringSize >= 6) {
+        numberInRussian += when (n / 100000 % 10) {
+            1 -> "сто "
+            2 -> "двести "
+            3 -> "триста "
+            4 -> "четыреста "
+            5 -> "пятьсот "
+            6 -> "шестьсот "
+            7 -> "семьсот "
+            8 -> "восемьтсот "
+            9 -> "девятьсот "
+            else -> ""
+        }
+    }
+    if (n / 10000 % 10 != 1) {
+        if (stringSize >= 5) {
+            numberInRussian += when (n / 10000 % 10) {
+                1 -> ""
+                2 -> "двадцать "
+                3 -> "тридцать "
+                4 -> "сорок "
+                5 -> "пятьдесят "
+                6 -> "шесть "
+                7 -> "семьдесят "
+                8 -> "восемьдесят "
+                9 -> "девяносто "
+                else -> ""
+            }
+        }
+        if (stringSize >= 4) {
+            numberInRussian += when (n / 1000 % 10) {
+                1 -> "одна тысяча "
+                2 -> "две тысячи "
+                3 -> "три тысячи "
+                4 -> "четыре тысячи "
+                5 -> "пять тысяч "
+                6 -> "шесть тысяч "
+                7 -> "семь тысяч "
+                8 -> "восемь тысяч "
+                9 -> "девять тысяч "
+                else -> "тысяч "
+            }
+        }
+
+    } else {
+        numberInRussian += when (n / 1000 % 100) {
+            10 -> "десять"
+            11 -> "одиннадцать"
+            12 -> "двенадцать"
+            13 -> "тринадцать"
+            14 -> "четырнадцать"
+            15 -> "пятнадцать"
+            16 -> "шестнадцать"
+            17 -> "семнадцать"
+            18 -> "восемнадцать"
+            19 -> "девятнадцать"
+            else -> ""
+        } + " тысяч "
+    }
+    if (stringSize >= 3) {
+        numberInRussian += when (n / 100 % 10) {
+            1 -> "сто "
+            2 -> "двести "
+            3 -> "триста "
+            4 -> "четыреста "
+            5 -> "пятьсот "
+            6 -> "шестьсот "
+            7 -> "семьсот "
+            8 -> "восемьтсот "
+            9 -> "девятьсот "
+            else -> ""
+        }
+    }
+
+    if (n % 100 / 10 != 1) {
+        if (stringSize >= 2) {
+            numberInRussian += when (n / 10 % 10) {
+                1 -> ""
+                2 -> "двадцать "
+                3 -> "тридцать "
+                4 -> "сорок "
+                5 -> "пятьдесят "
+                6 -> "шестьдесят "
+                7 -> "семьдесят "
+                8 -> "восемьдесят "
+                9 -> "девянсто "
+                else -> ""
+            }
+        }
+        if (stringSize >= 1) {
+            numberInRussian += when (n % 10) {
+                1 -> "один"
+                2 -> "два"
+                3 -> "три"
+                4 -> "четыре"
+                5 -> "пять"
+                6 -> "шесть"
+                7 -> "семь"
+                8 -> "восемь"
+                9 -> "девять"
+                else -> ""
+            }
+        }
+    } else {
+        numberInRussian += when (n % 100) {
+            10 -> "десять "
+            11 -> "одиннадцать "
+            12 -> "двенадцать "
+            13 -> "тринадцать "
+            14 -> "четырнадцать "
+            15 -> "пятнадцать "
+            16 -> "шестнадцать "
+            17 -> "семнадцать "
+            18 -> "восемнадцать "
+            19 -> "девятнадцать "
+            else -> ""
+        }
+    }
+
+    return numberInRussian.trim()
+}

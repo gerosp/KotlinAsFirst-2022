@@ -325,12 +325,12 @@ fun fibSequenceDigit(n: Int): Int {
         i++
         current += digitNumber(fib(i))
     }
-    if (current == n) {
-        return fib(i) % 10
+    return if (current == n) {
+        fib(i) % 10
     } else {
         println(fib(i))
         println(fib(i) / 10 * (current - n))
-        return (fib(i) / (10.toDouble().pow(current - n)).toInt()) % 10
+        (fib(i) / (10.toDouble().pow(current - n)).toInt()) % 10
     }
 
 }
