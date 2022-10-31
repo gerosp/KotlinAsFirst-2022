@@ -221,8 +221,9 @@ fun factorize(n: Int): List<Int> { // Алгоритм кольцевой фак
             dividers.add(k)
             number /= k
         }
-        k += inc[i % 7]
+        k += inc[i]
         i += 1
+        if (i > 7) i = 0
     }
     if (number > 1) dividers.add(number)
     return dividers
@@ -423,7 +424,7 @@ fun russian(n: Int): String {
                 3 -> "тридцать "
                 4 -> "сорок "
                 5 -> "пятьдесят "
-                6 -> "шесть "
+                6 -> "шестьдесят "
                 7 -> "семьдесят "
                 8 -> "восемьдесят "
                 9 -> "девяносто "
