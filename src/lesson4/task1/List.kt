@@ -220,40 +220,30 @@ fun eratosthenes(upperLimit: Int): List<Int> {
     return primeNumbers
 }
 
-fun factorize(n: Int): List<Int> {
+fun factorize(n: Int): List<Int> { // Алгоритм кольцевой факторизации
     var number = n
+    val inc = listOf(4, 2, 4, 2, 4, 6, 2, 6)
 
     val dividers = mutableListOf<Int>()
-    var isPrime = true
-    for (i in 2 until n) {
-        if (n % i == 0) {
-            isPrime = false
-            break
+    for (prime in arrayOf(2, 3, 5)) {
+        while (number % prime == 0) {
+            dividers.add(prime)
+            number /= prime
         }
     }
-    if(isPrime) return listOf(n)
-    var previousDivider = 2
-    while (number != 1 && previousDivider != n) {
-        for (i in previousDivider until n) {
-            var flag = true
-            for (j in 2 until i) {
-                if (i % j == 0) {
-                    flag = false
-                    break
-                }
-            }
-            if (flag && number % i == 0) {
-                number /= i
-                dividers.add(i)
-                previousDivider = i
-                break
-            }
+    var k = 7;
+    var i = 0
+
+    while (k * k <= number) {
+        while (number % k == 0) {
+            dividers.add(k)
+            number /= k
         }
+        i += 1
+        k += inc[i % 7]
     }
-    return when {
-        dividers.isNotEmpty() -> dividers
-        else -> listOf(n)
-    }
+    if (number > 1) dividers.add(number)
+    return dividers
 }
 
 /**
@@ -265,43 +255,29 @@ fun factorize(n: Int): List<Int> {
  */
 fun factorizeToString(n: Int): String {
     var number = n
-    val dividers = mutableListOf<Int>()
+    val inc = listOf(4, 2, 4, 2, 4, 6, 2, 6)
 
-    var previousDivider = 2
-    var isPrime = true
-    for (i in 2 until n) {
-        if (n % i == 0) {
-            isPrime = false
-            break
+    val dividers = mutableListOf<Int>()
+    for (prime in arrayOf(2, 3, 5)) {
+        while (number % prime == 0) {
+            dividers.add(prime)
+            number /= prime
         }
     }
-    if(isPrime) return n.toString()
-    while (number != 1 && previousDivider < n / previousDivider + 1) {
-        for (i in previousDivider until n) {
-            var flag = true
-            for (j in 2 until i) {
-                if (i % j == 0) {
-                    flag = false
-                    break
-                }
-            }
-            if (flag && number % i == 0) {
-                number /= i
-                dividers.add(i)
-                previousDivider = i
-                break
-            }
+    var k = 7;
+    var i = 0
+
+    while (k * k <= number) {
+        while (number % k == 0) {
+            dividers.add(k)
+            number /= k
         }
+        k += inc[i % 7]
+        i += 1
     }
-    when {
-        dividers.isNotEmpty() -> {
-            val dividersString = dividers.joinToString(separator = "") { it -> "$it*" }
-            return dividersString.slice(0..dividersString.length - 2)
-        }
-        else -> {
-            return n.toString()
-        }
-    }
+    if (number > 1) dividers.add(number)
+    val dividersString = dividers.joinToString(separator = "") { it -> "$it*" }
+    return dividersString.slice(0..dividersString.length - 2)
 }
 
 /**
@@ -549,7 +525,7 @@ fun russian(n: Int): String {
                 6 -> "шестьдесят "
                 7 -> "семьдесят "
                 8 -> "восемьдесят "
-                9 -> "девянсто "
+                9 -> "девяносто "
                 else -> ""
             }
         }
