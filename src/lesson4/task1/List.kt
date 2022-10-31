@@ -2,6 +2,7 @@
 
 package lesson4.task1
 
+
 import lesson1.task1.discriminant
 import kotlin.math.pow
 
@@ -201,7 +202,7 @@ fun accumulate(list: MutableList<Int>): MutableList<Int> {
  * Множители в списке должны располагаться по возрастанию.
  */
 fun eratosthenes(upperLimit: Int): List<Int> {
-    val primeBoolList = MutableList<Boolean>(kotlin.math.sqrt(upperLimit.toDouble()).toInt() + 2) { true }
+    val primeBoolList = MutableList<Boolean>(upperLimit + 1) { true }
     val primeNumbers = mutableListOf<Int>()
     var j = 1
     for (i in 2..primeBoolList.size - 1) {
@@ -221,22 +222,34 @@ fun eratosthenes(upperLimit: Int): List<Int> {
 
 fun factorize(n: Int): List<Int> {
     var number = n
-    val primeNumbers = eratosthenes(n)
-    var undividableByPrimeNumber = false
+
     val dividers = mutableListOf<Int>()
-    while (undividableByPrimeNumber == false) {
-        for (i in primeNumbers.indices) {
-            if (number % primeNumbers[i] == 0) {
-                number /= primeNumbers[i]
-                dividers.add(primeNumbers[i])
-                break
+    var isPrime = true
+    for (i in 2 until n) {
+        if (n % i == 0) {
+            isPrime = false
+            break
+        }
+    }
+    if(isPrime) return listOf(n)
+    var previousDivider = 2
+    while (number != 1 && previousDivider != n) {
+        for (i in previousDivider until n) {
+            var flag = true
+            for (j in 2 until i) {
+                if (i % j == 0) {
+                    flag = false
+                    break
+                }
             }
-            if (i == primeNumbers.size - 1) {
-                undividableByPrimeNumber = true
+            if (flag && number % i == 0) {
+                number /= i
+                dividers.add(i)
+                previousDivider = i
+                break
             }
         }
     }
-
     return when {
         dividers.isNotEmpty() -> dividers
         else -> listOf(n)
@@ -252,18 +265,31 @@ fun factorize(n: Int): List<Int> {
  */
 fun factorizeToString(n: Int): String {
     var number = n
-    val primeNumbers = eratosthenes(n)
-    var undividableByPrimeNumber = false
     val dividers = mutableListOf<Int>()
-    while (undividableByPrimeNumber == false) {
-        for (i in primeNumbers.indices) {
-            if (number % primeNumbers[i] == 0) {
-                number /= primeNumbers[i]
-                dividers.add(primeNumbers[i])
-                break
+
+    var previousDivider = 2
+    var isPrime = true
+    for (i in 2 until n) {
+        if (n % i == 0) {
+            isPrime = false
+            break
+        }
+    }
+    if(isPrime) return n.toString()
+    while (number != 1 && previousDivider < n / previousDivider + 1) {
+        for (i in previousDivider until n) {
+            var flag = true
+            for (j in 2 until i) {
+                if (i % j == 0) {
+                    flag = false
+                    break
+                }
             }
-            if (i == primeNumbers.size - 1) {
-                undividableByPrimeNumber = true
+            if (flag && number % i == 0) {
+                number /= i
+                dividers.add(i)
+                previousDivider = i
+                break
             }
         }
     }
@@ -311,6 +337,7 @@ fun convert(n: Int, base: Int): List<Int> {
 fun convertToString(n: Int, base: Int): String {
     val list = mutableListOf<Int>()
     var number = n
+    if (number == 0) return "0"
     while (number > 0) {
         list.add(number % base)
         number /= base
@@ -446,7 +473,7 @@ fun russian(n: Int): String {
             5 -> "пятьсот "
             6 -> "шестьсот "
             7 -> "семьсот "
-            8 -> "восемьтсот "
+            8 -> "восемьсот "
             9 -> "девятьсот "
             else -> ""
         }
@@ -505,7 +532,7 @@ fun russian(n: Int): String {
             5 -> "пятьсот "
             6 -> "шестьсот "
             7 -> "семьсот "
-            8 -> "восемьтсот "
+            8 -> "восемьсот "
             9 -> "девятьсот "
             else -> ""
         }
