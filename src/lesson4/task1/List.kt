@@ -236,11 +236,8 @@ fun factorize(n: Int): List<Int> { // Алгоритм кольцевой фак
  * Результат разложения вернуть в виде строки, например 75 -> 3*5*5
  * Множители в результирующей строке должны располагаться по возрастанию.
  */
-fun factorizeToString(n: Int): String {
-    val dividers = factorize(n)
-    val dividersString = dividers.joinToString(separator = "") { it -> "$it*" }
-    return dividersString.slice(0..dividersString.length - 2)
-}
+fun factorizeToString(n: Int): String = factorize(n).joinToString(separator = "*")
+
 
 /**
  * Средняя (3 балла)
@@ -273,23 +270,17 @@ fun convert(n: Int, base: Int): List<Int> {
  * (например, n.toString(base) и подобные), запрещается.
  */
 fun convertToString(n: Int, base: Int): String {
-    val list = mutableListOf<Int>()
-    var number = n
-    if (number == 0) return "0"
-    while (number > 0) {
-        list.add(number % base)
-        number /= base
-    }
-    list.reverse()
-    var convertedNumber = ""
+    val list = convert(n, base)
+
+    val sb = StringBuilder()
     for (i in list) {
         if (i < 10) {
-            convertedNumber += i.toString()
+            sb.append(i.toString())
         } else {
-            convertedNumber += (i + 87).toChar()
+            sb.append((i + 'W'.code).toChar())
         }
     }
-    return convertedNumber
+    return sb.toString()
 }
 
 /**
@@ -382,13 +373,14 @@ fun roman(n: Int): String {
         4000 to "MMMM"
     )
     var processedDigits = 0
-    var romanNumber: String = ""
+    val romanNumber = StringBuilder()
     while (number > 0) {
-        romanNumber = romanTable[number % 10 * 10.toDouble().pow(processedDigits).toInt()]!! + romanNumber
+        romanNumber.insert(0, romanTable[number % 10 * 10.toDouble().pow(processedDigits).toInt()]!!)
+        //romanNumber = romanTable[number % 10 * 10.toDouble().pow(processedDigits).toInt()]!! + romanNumber
         number /= 10
         processedDigits++
     }
-    return romanNumber
+    return romanNumber.toString()
 }
 
 /**
@@ -399,127 +391,143 @@ fun roman(n: Int): String {
  * 23964 = "двадцать три тысячи девятьсот шестьдесят четыре"
  */
 fun russian(n: Int): String {
-    var numberInRussian: String = ""
+    var numberInRussian = StringBuilder()
     val stringSize = n.toString().length
     if (n == 0) return "ноль"
     if (stringSize >= 6) {
-        numberInRussian += when (n / 100000 % 10) {
-            1 -> "сто "
-            2 -> "двести "
-            3 -> "триста "
-            4 -> "четыреста "
-            5 -> "пятьсот "
-            6 -> "шестьсот "
-            7 -> "семьсот "
-            8 -> "восемьсот "
-            9 -> "девятьсот "
-            else -> ""
-        }
+        numberInRussian.append(
+            when (n / 100000 % 10) {
+                1 -> "сто "
+                2 -> "двести "
+                3 -> "триста "
+                4 -> "четыреста "
+                5 -> "пятьсот "
+                6 -> "шестьсот "
+                7 -> "семьсот "
+                8 -> "восемьсот "
+                9 -> "девятьсот "
+                else -> ""
+            }
+        )
     }
     if (n / 10000 % 10 != 1) {
         if (stringSize >= 5) {
-            numberInRussian += when (n / 10000 % 10) {
-                1 -> ""
-                2 -> "двадцать "
-                3 -> "тридцать "
-                4 -> "сорок "
-                5 -> "пятьдесят "
-                6 -> "шестьдесят "
-                7 -> "семьдесят "
-                8 -> "восемьдесят "
-                9 -> "девяносто "
-                else -> ""
-            }
+            numberInRussian.append(
+                when (n / 10000 % 10) {
+                    1 -> ""
+                    2 -> "двадцать "
+                    3 -> "тридцать "
+                    4 -> "сорок "
+                    5 -> "пятьдесят "
+                    6 -> "шестьдесят "
+                    7 -> "семьдесят "
+                    8 -> "восемьдесят "
+                    9 -> "девяносто "
+                    else -> ""
+                }
+            )
         }
         if (stringSize >= 4) {
-            numberInRussian += when (n / 1000 % 10) {
-                1 -> "одна тысяча "
-                2 -> "две тысячи "
-                3 -> "три тысячи "
-                4 -> "четыре тысячи "
-                5 -> "пять тысяч "
-                6 -> "шесть тысяч "
-                7 -> "семь тысяч "
-                8 -> "восемь тысяч "
-                9 -> "девять тысяч "
-                else -> "тысяч "
-            }
+            numberInRussian.append(
+                when (n / 1000 % 10) {
+                    1 -> "одна тысяча "
+                    2 -> "две тысячи "
+                    3 -> "три тысячи "
+                    4 -> "четыре тысячи "
+                    5 -> "пять тысяч "
+                    6 -> "шесть тысяч "
+                    7 -> "семь тысяч "
+                    8 -> "восемь тысяч "
+                    9 -> "девять тысяч "
+                    else -> "тысяч "
+                }
+            )
         }
 
     } else {
-        numberInRussian += when (n / 1000 % 100) {
-            10 -> "десять"
-            11 -> "одиннадцать"
-            12 -> "двенадцать"
-            13 -> "тринадцать"
-            14 -> "четырнадцать"
-            15 -> "пятнадцать"
-            16 -> "шестнадцать"
-            17 -> "семнадцать"
-            18 -> "восемнадцать"
-            19 -> "девятнадцать"
-            else -> ""
-        } + " тысяч "
+        numberInRussian.append(
+            when (n / 1000 % 100) {
+                10 -> "десять"
+                11 -> "одиннадцать"
+                12 -> "двенадцать"
+                13 -> "тринадцать"
+                14 -> "четырнадцать"
+                15 -> "пятнадцать"
+                16 -> "шестнадцать"
+                17 -> "семнадцать"
+                18 -> "восемнадцать"
+                19 -> "девятнадцать"
+                else -> ""
+            } + " тысяч "
+        )
     }
     if (stringSize >= 3) {
-        numberInRussian += when (n / 100 % 10) {
-            1 -> "сто "
-            2 -> "двести "
-            3 -> "триста "
-            4 -> "четыреста "
-            5 -> "пятьсот "
-            6 -> "шестьсот "
-            7 -> "семьсот "
-            8 -> "восемьсот "
-            9 -> "девятьсот "
-            else -> ""
-        }
+        numberInRussian.append(
+            when (n / 100 % 10) {
+                1 -> "сто "
+                2 -> "двести "
+                3 -> "триста "
+                4 -> "четыреста "
+                5 -> "пятьсот "
+                6 -> "шестьсот "
+                7 -> "семьсот "
+                8 -> "восемьсот "
+                9 -> "девятьсот "
+                else -> ""
+            }
+        )
     }
 
     if (n % 100 / 10 != 1) {
         if (stringSize >= 2) {
-            numberInRussian += when (n / 10 % 10) {
-                1 -> ""
-                2 -> "двадцать "
-                3 -> "тридцать "
-                4 -> "сорок "
-                5 -> "пятьдесят "
-                6 -> "шестьдесят "
-                7 -> "семьдесят "
-                8 -> "восемьдесят "
-                9 -> "девяносто "
-                else -> ""
-            }
+            numberInRussian.append(
+                when (n / 10 % 10) {
+                    1 -> ""
+                    2 -> "двадцать "
+                    3 -> "тридцать "
+                    4 -> "сорок "
+                    5 -> "пятьдесят "
+                    6 -> "шестьдесят "
+                    7 -> "семьдесят "
+                    8 -> "восемьдесят "
+                    9 -> "девяносто "
+                    else -> ""
+                }
+            )
         }
         if (stringSize >= 1) {
-            numberInRussian += when (n % 10) {
-                1 -> "один"
-                2 -> "два"
-                3 -> "три"
-                4 -> "четыре"
-                5 -> "пять"
-                6 -> "шесть"
-                7 -> "семь"
-                8 -> "восемь"
-                9 -> "девять"
-                else -> ""
-            }
+            numberInRussian.append(
+                when (n % 10) {
+                    1 -> "один"
+                    2 -> "два"
+                    3 -> "три"
+                    4 -> "четыре"
+                    5 -> "пять"
+                    6 -> "шесть"
+                    7 -> "семь"
+                    8 -> "восемь"
+                    9 -> "девять"
+                    else -> ""
+                }
+            )
         }
     } else {
-        numberInRussian += when (n % 100) {
-            10 -> "десять "
-            11 -> "одиннадцать "
-            12 -> "двенадцать "
-            13 -> "тринадцать "
-            14 -> "четырнадцать "
-            15 -> "пятнадцать "
-            16 -> "шестнадцать "
-            17 -> "семнадцать "
-            18 -> "восемнадцать "
-            19 -> "девятнадцать "
-            else -> ""
-        }
+        numberInRussian.append(
+            when (n % 100) {
+                10 -> "десять "
+                11 -> "одиннадцать "
+                12 -> "двенадцать "
+                13 -> "тринадцать "
+                14 -> "четырнадцать "
+                15 -> "пятнадцать "
+                16 -> "шестнадцать "
+                17 -> "семнадцать "
+                18 -> "восемнадцать "
+                19 -> "девятнадцать "
+                else -> ""
+            }
+        )
     }
 
-    return numberInRussian.trim()
+    return numberInRussian.toString().trim()
 }

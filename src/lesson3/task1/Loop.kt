@@ -161,13 +161,13 @@ fun maxDivisor(n: Int): Int {
  * Написать функцию, которая находит, сколько шагов требуется для
  * этого для какого-либо начального X > 0.
  */
-fun collatzSteps(x: Int): Int {
-    return when {
+fun collatzSteps(x: Int): Int =
+    when {
         x == 1 -> 0
         x % 2 == 0 -> collatzSteps(x / 2) + 1
         else -> collatzSteps(3 * x + 1) + 1
     }
-}
+
 
 /**
  * Средняя (3 балла)
@@ -212,11 +212,8 @@ fun isCoPrime(m: Int, n: Int): Boolean = gcd(m, n) == 1
 fun revert(n: Int): Int {
     var m = n
     var c = 0
-    var length = 0
-    while (m > 0) {
-        length += 1
-        m /= 10
-    }
+    val length = digitNumber(n)
+
     m = n
     for (i in 0 until length) {
         c += (m % 10 * 10.0.pow((length - 1 - i))).toInt()
@@ -264,15 +261,9 @@ fun hasDifferentDigits(n: Int): Boolean {
  * Подумайте, как добиться более быстрой сходимости ряда при больших значениях x.
  * Использовать kotlin.math.sin и другие стандартные реализации функции синуса в этой задаче запрещается.
  */
-fun fact(n: Int): Int { // Может понадобиться Long
-    var m = 1
-    for (i in 1..n) {
-        m *= i
-    }
-    return m
-}
 
-fun sin(x: Double, eps: Double): Double =TODO()
+fun sin(x: Double, eps: Double): Double = TODO()
+
 /**
  * Средняя (4 балла)
  *
