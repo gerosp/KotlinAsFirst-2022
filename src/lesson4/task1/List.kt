@@ -277,7 +277,7 @@ fun convertToString(n: Int, base: Int): String {
         if (i < 10) {
             sb.append(i.toString())
         } else {
-            sb.append((i + 'W'.code).toChar())
+            sb.append((i + 'a'.code - 10).toChar())
         }
     }
     return sb.toString()
@@ -311,12 +311,12 @@ fun decimal(digits: List<Int>, base: Int): Int {
  * (например, str.toInt(base)), запрещается.
  */
 fun decimalFromString(str: String, base: Int): Int {
-    val digits: MutableList<Int> = mutableListOf()
+    val digits = mutableListOf<Int>()
     for (i in str) {
         if (i.isDigit()) {
             digits.add(i.code - '0'.code)
         } else {
-            digits.add(i.code - 'W'.code)
+            digits.add(i.code - 'a'.code - 10)
         }
     }
     var n = 0
@@ -375,11 +375,11 @@ fun roman(n: Int): String {
     var processedDigits = 0
     val romanNumber = StringBuilder()
     while (number > 0) {
-        romanNumber.insert(0, romanTable[number % 10 * 10.toDouble().pow(processedDigits).toInt()]!!)
-        //romanNumber = romanTable[number % 10 * 10.toDouble().pow(processedDigits).toInt()]!! + romanNumber
+        romanNumber.append(romanTable[number % 10 * 10.toDouble().pow(processedDigits).toInt()]!!.reversed())
         number /= 10
         processedDigits++
     }
+    romanNumber.reverse()
     return romanNumber.toString()
 }
 

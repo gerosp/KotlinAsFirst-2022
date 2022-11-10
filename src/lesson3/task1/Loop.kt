@@ -96,9 +96,8 @@ fun digitNumber(n: Int): Int {
  * Ряд Фибоначчи определён следующим образом: fib(1) = 1, fib(2) = 1, fib(n+2) = fib(n) + fib(n+1)
  */
 val hm = HashMap<Int, Int>()
-fun fib(n: Int): Int {
-
-    return when (n) {
+fun fib(n: Int): Int =
+    when (n) {
         in hm.keys -> hm[n]!!
 
         0 -> 0
@@ -112,7 +111,6 @@ fun fib(n: Int): Int {
         }
     }
 
-}
 
 /**
  * Простая (2 балла)
@@ -121,7 +119,7 @@ fun fib(n: Int): Int {
  */
 fun minDivisor(n: Int): Int {
     var divisor = 2
-    while (n % divisor != 0 && divisor < kotlin.math.sqrt(n.toDouble()) + 1) {
+    while (n % divisor != 0 && divisor < sqrt(n.toDouble()) + 1) {
         divisor++
     }
     if (n % divisor != 0) {

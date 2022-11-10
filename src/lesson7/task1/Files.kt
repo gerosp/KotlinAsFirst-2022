@@ -3,6 +3,7 @@
 package lesson7.task1
 
 import java.io.File
+import java.util.ArrayDeque
 
 // Урок 7: работа с файлами
 // Урок интегральный, поэтому его задачи имеют сильно увеличенную стоимость
@@ -63,7 +64,20 @@ fun alignFile(inputName: String, lineLength: Int, outputName: String) {
  * Подчёркивание в середине и/или в конце строк значения не имеет.
  */
 fun deleteMarked(inputName: String, outputName: String) {
-    TODO()
+    val writer = File(outputName).bufferedWriter()
+    var lineWritten = false
+    for (line in File(inputName).readLines()) {
+        when {
+            line.isEmpty() -> writer.newLine()
+            line[0] != '_' -> {
+                if (lineWritten) writer.newLine()
+                writer.write(line)
+                lineWritten = true
+            }
+        }
+
+    }
+    writer.close()
 }
 
 /**
@@ -75,7 +89,33 @@ fun deleteMarked(inputName: String, outputName: String) {
  * Регистр букв игнорировать, то есть буквы е и Е считать одинаковыми.
  *
  */
-fun countSubstrings(inputName: String, substrings: List<String>): Map<String, Int> = TODO()
+fun countSubstrings(inputName: String, substrings: List<String>): Map<String, Int> {
+    val str = File(inputName).readText()
+    val substringsCount = mutableMapOf<String, Int>()
+    for (i in substrings) {
+        substringsCount[i] = 0
+    }
+    var currentSubstringCount = 0
+    for (i in substrings) {
+        currentSubstringCount = 0
+        for (j in str.indices) {
+            if (str[j].toString().lowercase() == i[0].lowercase()) {
+                var flag = true
+                if (j + i.length - 1 < str.length) {
+                    for (k in i.indices) {
+                        if (str[j + k].lowercase() != i[k].lowercase()) {
+                            flag = false
+                            break
+                        }
+                    }
+                    if (flag) currentSubstringCount++
+                }
+            }
+        }
+        substringsCount[i] = currentSubstringCount
+    }
+    return substringsCount
+}
 
 
 /**
