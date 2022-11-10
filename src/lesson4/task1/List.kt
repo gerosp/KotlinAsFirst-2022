@@ -316,7 +316,7 @@ fun decimalFromString(str: String, base: Int): Int {
         if (i.isDigit()) {
             digits.add(i.code - '0'.code)
         } else {
-            digits.add(i.code - 'a'.code - 10)
+            digits.add(i.code - 'a'.code + 10)
         }
     }
     var n = 0
