@@ -63,7 +63,18 @@ fun alignFile(inputName: String, lineLength: Int, outputName: String) {
  * Подчёркивание в середине и/или в конце строк значения не имеет.
  */
 fun deleteMarked(inputName: String, outputName: String) {
-    TODO()
+    val writer = File(outputName).bufferedWriter()
+    for (line in File(inputName).readLines()) {
+        when {
+            line.isEmpty() -> writer.newLine()
+            line[0] != '_' -> {
+                writer.write(line)
+                writer.newLine()
+            }
+        }
+
+    }
+    writer.close()
 }
 
 /**
@@ -382,8 +393,121 @@ fun markdownToHtmlSimple(inputName: String, outputName: String) {
 ///////////////////////////////конец файла//////////////////////////////////////////////////////////////////////////////
  * (Отступы и переносы строк в примере добавлены для наглядности, при решении задачи их реализовывать не обязательно)
  */
+fun identifyListElement(e: String): Pair<String, Int> { // Возвращает тип элемента списка (нумерованный num или ненумерованный bul)/None если строка пустая, а также количество пробелов перед ним
+    var i = 0
+    if (e.isEmpty()) return Pair("None", 0)
+    while (i < e.length && e[i] == ' ') {
+        i++
+    }
+    if (e.matches(Regex("^\\s*\\*\\s+\\W+"))) return Pair("bul", i)
+    if (e.matches(Regex("^\\s*\\d+\\.\\W+"))) return Pair("num", i)
+    return Pair("None", 0)
+}
+
+fun spaces(n: Int): String {
+    var s = ""
+    for (i in 0..n) {
+        s += " "
+    }
+    return s
+}
+
 fun markdownToHtmlLists(inputName: String, outputName: String) {
-    TODO()
+    val inputText = File(inputName).readLines()
+    val writer = File(outputName).bufferedWriter()
+    var currentIndent = 0
+    val tagStack = ArrayDeque<String>()
+
+    writer.write("<html>\n<body>\n<p>\n")
+    for (line in inputText) {
+        when (identifyListElement(line).first) {
+            "bul" -> {
+                if (identifyListElement(line).second > currentIndent) { // По идее скачка не на 4 быть не должно
+                    currentIndent = identifyListElement(line).second
+                    tagStack.add("ul")
+                    writer.write("<ul>\n")
+                } else if (identifyListElement(line).second < currentIndent) {
+                    if (tagStack.isNotEmpty()) { // пытаемся закрыть предыдущий тег li
+                        writer.write("</" + tagStack.last() + ">\n")
+                        tagStack.removeLast()
+                    }
+                    currentIndent = identifyListElement(line).second
+                    if (tagStack.isNotEmpty()) { // пытаемся закрыть предыдущий тег ul
+                        writer.write("</" + tagStack.last() + ">\n")
+                        tagStack.removeLast()
+                    }
+                    if (tagStack.isNotEmpty()) { // пытаемся закрыть предыдущий тег li
+                        writer.write("</" + tagStack.last() + ">\n")
+                        tagStack.removeLast()
+                    }
+                } else {
+                    if (tagStack.isNotEmpty()) { // пытаемся закрыть предыдущий тег
+                        writer.write("</" + tagStack.last() + ">\n")
+                        tagStack.removeLast()
+                    }
+                }
+                if (tagStack.isEmpty()) {  // Для первого входа в программу
+                    tagStack.add("ul")
+                    writer.write("<ul>\n")
+                }
+                if (tagStack.isNotEmpty() && tagStack.last() != "ul") throw Exception("А какого хрена это произошло?")
+                currentIndent = identifyListElement(line).second
+                writer.write(spaces(currentIndent) + "<li>\n")
+                writer.write(spaces(currentIndent) + line.slice(line.indexOfFirst { it == '*' } + 1..line.lastIndex) + "\n") // Может вызвать исключение при строке "*" TODO: Исправить возможное исключение
+                tagStack.add("li\n")
+
+            }
+            "num" -> {
+                if (identifyListElement(line).second > currentIndent) { // По идее скачка не на 4 быть не должно
+                    currentIndent = identifyListElement(line).second
+                    tagStack.add("ol")
+                    writer.write("<ol\n>")
+                } else if (identifyListElement(line).second < currentIndent) {
+                    if (tagStack.isNotEmpty()) { // пытаемся закрыть предыдущий тег li
+                        writer.write("</" + tagStack.last() + ">\n")
+                        tagStack.removeLast()
+                    }
+                    currentIndent = identifyListElement(line).second
+                    if (tagStack.isNotEmpty()) { // пытаемся закрыть предыдущий тег ol
+                        writer.write("</" + tagStack.last() + ">\n")
+                        tagStack.removeLast()
+                    }
+                    if (tagStack.isNotEmpty()) { // пытаемся закрыть предыдущий тег li
+                        writer.write("</" + tagStack.last() + ">\n")
+                        tagStack.removeLast()
+                    }
+                } else {
+                    if (tagStack.isNotEmpty()) { // пытаемся закрыть предыдущий тег
+                        writer.write("</" + tagStack.last() + ">\n")
+                        tagStack.removeLast()
+                    }
+                }
+                if (tagStack.isEmpty()) {  // Для первого входа в программу
+                    tagStack.add("ol")
+                    writer.write("<ol>\n")
+                }
+                if (tagStack.isNotEmpty() && tagStack.last() != "ol") throw Exception("А какого хрена это произошло?")
+                currentIndent = identifyListElement(line).second
+                writer.write(spaces(currentIndent) + "<li>\n")
+                writer.write(spaces(currentIndent) + line.slice(line.indexOfFirst { it == '.' } + 1..line.lastIndex) + "\n") // Может вызвать исключение при строке "*" TODO: Исправить возможное исключение
+                tagStack.add("li")
+
+            }
+
+            else -> {
+                if (tagStack.isNotEmpty()) {
+                    writer.write("</" + tagStack.last() + ">\n")
+                    tagStack.removeLast()
+                }
+            }
+        }
+    }
+    while (tagStack.isNotEmpty()) {
+        writer.write("</" + tagStack.last() + ">\n")
+        tagStack.removeLast()
+    }
+    writer.write("</p>\n</body>\n</html>\n")
+    writer.close()
 }
 
 /**
