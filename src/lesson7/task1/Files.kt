@@ -133,7 +133,82 @@ fun countSubstrings(inputName: String, substrings: List<String>): Map<String, In
  *
  */
 fun sibilants(inputName: String, outputName: String) {
-    TODO()
+    val writer = File(outputName).bufferedWriter()
+    var lineWritten = false
+    for (line in File(inputName).readLines()) {
+        var newLine = line
+        while ("жы" in newLine.lowercase() || "жя" in newLine.lowercase() || "жю" in newLine.lowercase()
+            || "чы" in newLine.lowercase() || "чя" in newLine.lowercase() || "чю" in newLine.lowercase()
+            || "шы" in newLine.lowercase() || "шя" in newLine.lowercase() || "шю" in newLine.lowercase()
+            || "щы" in newLine.lowercase() || "щя" in newLine.lowercase() || "щю" in newLine.lowercase()
+        ) {
+            when {
+                "жы" in newLine -> newLine = newLine.replace("жы", "жи")
+                "Жы" in newLine -> newLine = newLine.replace("Жы", "Жи")
+                "жЫ" in newLine -> newLine = newLine.replace("жЫ", "жИ")
+                "ЖЫ" in newLine -> newLine = newLine.replace("ЖЫ", "ЖИ")
+
+                "жя" in newLine -> newLine = newLine.replace("жя", "жа")
+                "Жя" in newLine -> newLine = newLine.replace("Жя", "Жа")
+                "жЯ" in newLine -> newLine = newLine.replace("жЯ", "жА")
+                "ЖЯ" in newLine -> newLine = newLine.replace("ЖЯ", "ЖА")
+
+                "жю" in newLine -> newLine = newLine.replace("жю", "жу")
+                "Жю" in newLine -> newLine = newLine.replace("Жю", "Жу")
+                "жЮ" in newLine -> newLine = newLine.replace("жЮ", "жУ")
+                "ЖЮ" in newLine -> newLine = newLine.replace("ЖЮ", "ЖУ")
+
+                "чы" in newLine -> newLine = newLine.replace("чы", "чи")
+                "Чы" in newLine -> newLine = newLine.replace("Чы", "Чи")
+                "чЫ" in newLine -> newLine = newLine.replace("чЫ", "чИ")
+                "ЧЫ" in newLine -> newLine = newLine.replace("ЧЫ", "ЧИ")
+
+                "чя" in newLine -> newLine = newLine.replace("чя", "ча")
+                "Чя" in newLine -> newLine = newLine.replace("Чя", "Ча")
+                "чЯ" in newLine -> newLine = newLine.replace("чЯ", "чА")
+                "ЧЯ" in newLine -> newLine = newLine.replace("ЧЯ", "ЧА")
+
+                "чю" in newLine -> newLine = newLine.replace("чю", "чу")
+                "Чю" in newLine -> newLine = newLine.replace("Чю", "Чу")
+                "чЮ" in newLine -> newLine = newLine.replace("чЮ", "чУ")
+                "ЧЮ" in newLine -> newLine = newLine.replace("ЧЮ", "ЧУ")
+
+                "шы" in newLine -> newLine = newLine.replace("шы", "ши")
+                "Шы" in newLine -> newLine = newLine.replace("Шы", "Ши")
+                "шЫ" in newLine -> newLine = newLine.replace("шЫ", "шИ")
+                "ШЫ" in newLine -> newLine = newLine.replace("ШЫ", "ШИ")
+
+                "шя" in newLine -> newLine = newLine.replace("шя", "ша")
+                "Шя" in newLine -> newLine = newLine.replace("Шя", "Ша")
+                "шЯ" in newLine -> newLine = newLine.replace("шЯ", "шА")
+                "ШЯ" in newLine -> newLine = newLine.replace("ШЯ", "ША")
+
+                "шю" in newLine -> newLine = newLine.replace("шю", "шу")
+                "Шю" in newLine -> newLine = newLine.replace("Шю", "Шу")
+                "шЮ" in newLine -> newLine = newLine.replace("шЮ", "шУ")
+                "ШЮ" in newLine -> newLine = newLine.replace("ШЮ", "ШУ")
+
+                "щы" in newLine -> newLine = newLine.replace("щы", "щи")
+                "Щы" in newLine -> newLine = newLine.replace("Щы", "Щи")
+                "щЫ" in newLine -> newLine = newLine.replace("щЫ", "щИ")
+                "ЩЫ" in newLine -> newLine = newLine.replace("ЩЫ", "ЩИ")
+
+                "щя" in newLine -> newLine = newLine.replace("щя", "ща")
+                "Щя" in newLine -> newLine = newLine.replace("Щя", "Ща")
+                "щЯ" in newLine -> newLine = newLine.replace("щЯ", "щА")
+                "ЩЯ" in newLine -> newLine = newLine.replace("ЩЯ", "ЩА")
+
+                "щю" in newLine -> newLine = newLine.replace("щю", "щу")
+                "Щю" in newLine -> newLine = newLine.replace("Щю", "Щу")
+                "щЮ" in newLine -> newLine = newLine.replace("щЮ", "щУ")
+                "ЩЮ" in newLine -> newLine = newLine.replace("ЩЮ", "ЩУ")
+            }
+            if (lineWritten) writer.newLine()
+            writer.write(newLine)
+            lineWritten = true
+        }
+    }
+    writer.close()
 }
 
 /**
@@ -364,8 +439,34 @@ Suspendisse <s>et elit in enim tempus iaculis</s>.
  *
  * (Отступы и переносы строк в примере добавлены для наглядности, при решении задачи их реализовывать не обязательно)
  */
-fun markdownToHtmlSimple(inputName: String, outputName: String) {
-    TODO()
+fun markdownToHtmlSimple(inputName: String, outputName: String) { // Оно все равно не работает, можно удалять :)
+    val inputText = File(inputName).readLines()
+    val writer = File(outputName).bufferedWriter()
+    val tagStack = ArrayDeque<String>()
+    var htmlCode = ""
+    tagStack.add("html")
+    htmlCode += "<html>\n"
+    tagStack.add("body")
+    htmlCode += "<body>\n"
+    for (line in inputText) {
+        if ("p" !in tagStack) {
+            if (line.isNotEmpty())
+                tagStack.add("p")
+            htmlCode += "<p>\n"
+        }
+        when {
+            Regex("[^*]*[^*]]") in line -> {
+                line.split(Regex("[^*]*[^*]]"))
+            }
+        }
+
+    }
+    while (tagStack.isNotEmpty()) {
+        htmlCode += "</" + tagStack.last() + ">\n"
+        tagStack.removeLast()
+    }
+
+    writer.close()
 }
 
 /**
