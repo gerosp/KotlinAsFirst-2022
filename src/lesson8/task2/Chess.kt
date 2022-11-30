@@ -22,7 +22,7 @@ data class Square(val column: Int, val row: Int) {
      * В нотации, колонки обозначаются латинскими буквами от a до h, а ряды -- цифрами от 1 до 8.
      * Для клетки не в пределах доски вернуть пустую строку
      */
-    fun notation(): String = TODO()
+    fun notation(): String = if (row in 1 until 9 && column in 1 until 9) "${'a' - 1 + column}$row" else ""
 }
 
 /**
@@ -32,7 +32,14 @@ data class Square(val column: Int, val row: Int) {
  * В нотации, колонки обозначаются латинскими буквами от a до h, а ряды -- цифрами от 1 до 8.
  * Если нотация некорректна, бросить IllegalArgumentException
  */
-fun square(notation: String): Square = TODO()
+fun square(notation: String): Square {
+    if (notation.length != 2) throw IllegalArgumentException()
+    if (!Regex("[a-h]").matches(notation[0].toString()) ||
+        !notation[1].isDigit() ||
+        notation[1].code - '0'.code !in 1..8
+    ) throw IllegalArgumentException()
+    return Square(notation[0] - 'a' + 1, notation[1].code - '0'.code)
+}
 
 /**
  * Простая (2 балла)
@@ -57,7 +64,11 @@ fun square(notation: String): Square = TODO()
  * Пример: rookMoveNumber(Square(3, 1), Square(6, 3)) = 2
  * Ладья может пройти через клетку (3, 3) или через клетку (6, 1) к клетке (6, 3).
  */
-fun rookMoveNumber(start: Square, end: Square): Int = TODO()
+fun rookMoveNumber(start: Square, end: Square): Int = when {
+    start == end -> 0
+    (start.row == end.row) xor (start.column == end.column) -> 1
+    else -> 2
+}
 
 /**
  * Средняя (3 балла)
@@ -181,7 +192,62 @@ fun kingTrajectory(start: Square, end: Square): List<Square> = TODO()
  * Пример: knightMoveNumber(Square(3, 1), Square(6, 3)) = 3.
  * Конь может последовательно пройти через клетки (5, 2) и (4, 4) к клетке (6, 3).
  */
-fun knightMoveNumber(start: Square, end: Square): Int = TODO()
+fun knightFindNeighbours(sq: Square): List<Square> { // Функция поиска соседа для хода коня
+    val neighbours = mutableListOf<Square>()
+    if (sq.column + 2 in 0..7 && sq.row + 1 in 1..7) {  // Вверх-вправо
+        neighbours.add(Square(sq.column + 2, sq.row + 1))
+    }
+    if (sq.column + 2 in 0..7 && sq.row - 1 < 8 && sq.row - 1 >= 0) { // Вверх-влево
+        neighbours.add(Square(sq.column + 2, sq.row - 1))
+    }
+    if (sq.column - 2 in 0..7 && sq.row + 1 < 8 && sq.row + 1 >= 0) { // Вниз-вправо
+        neighbours.add(Square(sq.column - 2, sq.row + 1))
+    }
+
+    if (sq.column - 2 in 0..7 && sq.row - 1 < 8 && sq.row - 1 >= 0) { // Вниз-влево
+        neighbours.add(Square(sq.column - 2, sq.row - 1))
+    }
+    // Вправо-вверх
+    if (sq.column + 1 in 0..7 && sq.row + 2 in 0..7) {  // Вверх-вправо
+        neighbours.add(Square(sq.column + 1, sq.row + 2))
+    }
+    if (sq.column + 1 in 0..7 && sq.row - 2 < 8 && sq.row - 2 >= 0) { // Вверх-влево
+        neighbours.add(Square(sq.column + 1, sq.row - 2))
+    }
+    if (sq.column - 1 in 0..7 && sq.row + 2 < 8 && sq.row + 2 >= 0) { // Вниз-вправо
+        neighbours.add(Square(sq.column - 1, sq.row + 2))
+    }
+    if (sq.column - 1 in 0..7 && sq.row - 2 < 8 && sq.row - 2 >= 0) { // Вниз-влево
+        neighbours.add(Square(sq.column - 1, sq.row - 2))
+    }
+    return neighbours
+}
+
+fun knightMoves(start: Square, end: Square): MutableList<MutableList<Int>> {
+    val field = MutableList(8) { MutableList(8) { -1 } }
+    field[start.row - 1][start.column - 1] = 0
+    var visitedSquares = 0
+    var d = 0
+    while (field[end.row - 1][end.column - 1] == -1 && visitedSquares != 64) { // Добавить условие на возможность распространения волны
+        visitedSquares += 1
+        for (i in field.indices) {
+            for (j in field[i].indices) {
+                if (field[i][j] == d) {
+                    for ((row, column) in knightFindNeighbours(Square(i, j))) {
+                        if (field[row][column] == -1)
+                            field[row][column] = d + 1
+                    }
+                }
+            }
+        }
+        d++
+    }
+    return field
+}
+
+fun knightMoveNumber(start: Square, end: Square): Int =
+    knightMoves(start, end)[end.row - 1][end.column - 1]
+
 
 /**
  * Очень сложная (10 баллов)
@@ -203,4 +269,31 @@ fun knightMoveNumber(start: Square, end: Square): Int = TODO()
  *
  * Если возможно несколько вариантов самой быстрой траектории, вернуть любой из них.
  */
-fun knightTrajectory(start: Square, end: Square): List<Square> = TODO()
+fun knightTrajectory(start: Square, end: Square): List<Square> {
+
+    val field = knightMoves(start, end).toMutableList()
+
+    var d = field[end.row - 1][end.column - 1]
+    val path = mutableListOf<Square>()
+    var current = Square(end.column - 1, end.row - 1)
+    path.add(Square(current.column + 1, current.row + 1))
+
+    while (Square(
+            current.column + 1,
+            current.row + 1
+        ) != start && d >= 0
+    ) {
+
+        for ((column, row) in knightFindNeighbours(current)) {
+
+            if (field[row][column] == d - 1) {
+                path.add(Square(column + 1, row + 1)) // Можно просто класть current
+                current = Square(column, row)
+                break
+            }
+        }
+
+        d--
+    }
+    return path.reversed()
+}

@@ -44,32 +44,88 @@ interface Matrix<E> {
  * height = высота, width = ширина, e = чем заполнить элементы.
  * Бросить исключение IllegalArgumentException, если height или width <= 0.
  */
-fun <E> createMatrix(height: Int, width: Int, e: E): Matrix<E> = TODO()
+fun <E> createMatrix(height: Int, width: Int, e: E): Matrix<E> {
+    if (height <= 0 || width <= 0) throw IllegalArgumentException()
+    return MatrixImpl<E>(height, width, e)
+}
 
 /**
  * Средняя сложность (считается двумя задачами в 3 балла каждая)
  *
  * Реализация интерфейса "матрица"
  */
-class MatrixImpl<E> : Matrix<E> {
-    override val height: Int = TODO()
 
-    override val width: Int = TODO()
+class MatrixImpl<E>(override val height: Int, override val width: Int, e: E) : Matrix<E> {
 
-    override fun get(row: Int, column: Int): E = TODO()
+    private var cells: MutableList<MutableList<E>> = mutableListOf()
 
-    override fun get(cell: Cell): E = TODO()
+    init {
+        if (height <= 0 || width <= 0) throw IllegalArgumentException()
+        for (i in 0..height) {
+            cells.add(mutableListOf())
+            for (j in 0..width) {
+                cells[i].add(e)
+            }
+        }
+    }
+
+    override fun get(row: Int, column: Int): E {
+        if (row < 0 || row >= height || column < 0 || column >= width) throw IndexOutOfBoundsException()
+
+        return cells[row][column]
+    }
+
+    override fun get(cell: Cell): E {
+        if (cell.row < 0 || cell.row >= height || cell.column < 0 || cell.column >= width)
+            throw IndexOutOfBoundsException()
+        return cells[cell.row][cell.column]
+    }
 
     override fun set(row: Int, column: Int, value: E) {
-        TODO()
+        if (row < 0 || row >= height || column < 0 || column >= width) throw IndexOutOfBoundsException()
+        cells[row][column] =
+            value
     }
 
     override fun set(cell: Cell, value: E) {
-        TODO()
+        if (cell.row < 0 || cell.row >= height || cell.column < 0 || cell.column >= width)
+            throw IndexOutOfBoundsException()
+        cells[cell.row][cell.column] = value
     }
 
-    override fun equals(other: Any?) = TODO()
+    override fun equals(other: Any?): Boolean {
+        var isEqual = false
+        if (other is MatrixImpl<*> && other.height == height && other.width == width) {
+            isEqual = true
+            for (i in cells.indices) {
+                for (j in cells[i].indices) {
+                    if (cells[i][j] != other[i, j]) {
+                        isEqual = false
+                        break
+                    }
+                }
+            }
+        }
+        return isEqual
+    }
 
-    override fun toString(): String = TODO()
+    override fun toString(): String {
+        //ODO
+        val sb = StringBuilder()
+        for (i in cells.indices) {
+            for (j in cells[i].indices) {
+                if (j != cells.lastIndex) {
+                    sb.append(cells[i][j].toString() + ", ")
+                } else sb.append(cells[i][j].toString() + "\n")
+            }
+        }
+        return sb.toString()
+    }
+
+    override fun hashCode(): Int {
+        var result = height
+        result = 31 * result + width
+        return result
+    }
 }
 

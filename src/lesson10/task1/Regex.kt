@@ -82,7 +82,12 @@ sealed class Expression {
                 left.calculate(x) / right.calculate(x)
             }
             POW -> {
-                TODO()
+                if (left.calculate(x) == 0) 1
+                var power = left.calculate(x)
+                for (i in 0..right.calculate(x)) {
+                    power *= x
+                }
+                power
             }
         }
         is Negate -> -arg.calculate(x)
@@ -114,12 +119,12 @@ class Parser(private val groups: List<String>) {
     }
 
     private fun parseItem(): Expression {
-        var left = parseFactor()
+        var left = parseExponentiation()
         while (pos < groups.size) {
             when (val op = operationMap[groups[pos]]) {
                 TIMES, DIV -> {
                     pos++
-                    val right = parseFactor()
+                    val right = parseExponentiation()
                     left = Expression.Binary(left, op, right)
                 }
                 else -> return left
@@ -152,7 +157,18 @@ class Parser(private val groups: List<String>) {
      * предыдущих функциях парсера, и поддержать операцию POW внутри функции calculate.
      */
     internal fun parseExponentiation(): Expression {
-        TODO()
+        var left = parseFactor()
+        while (pos < groups.size) {
+            when (val op = operationMap[groups[pos]]) {
+                POW -> {
+                    pos++
+                    val right = parseFactor()
+                    left = Expression.Binary(left, op, right)
+                }
+                else -> return left
+            }
+        }
+        return left
     }
 
     private val operationMap = mapOf("+" to PLUS, "-" to MINUS, "*" to TIMES, "/" to DIV, "^" to POW)
