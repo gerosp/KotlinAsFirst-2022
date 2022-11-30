@@ -150,7 +150,7 @@ fun containsIn(a: Map<String, String>, b: Map<String, String>): Boolean {
  */
 fun subtractOf(a: MutableMap<String, String>, b: Map<String, String>) {
     for (i in b.keys) {
-        if (i in a.keys && a[i] == b[i]) {
+        if (a[i] != null && a[i] == b[i]) {
             a.remove(i)
         }
     }
@@ -164,13 +164,13 @@ fun subtractOf(a: MutableMap<String, String>, b: Map<String, String>) {
  * т. е. whoAreInBoth(listOf("Марат", "Семён, "Марат"), listOf("Марат", "Марат")) == listOf("Марат")
  */
 fun whoAreInBoth(a: List<String>, b: List<String>): List<String> {
-    val intersection = mutableListOf<String>()
+    val intersection = mutableSetOf<String>()
     for (i in a) {
         if (i in b && i !in intersection) {
             intersection.add(i)
         }
     }
-    return intersection
+    return intersection.toList()
 }
 
 /**
@@ -218,7 +218,7 @@ fun averageStockPrice(stockPrices: List<Pair<String, Double>>): Map<String, Doub
     val averagePrices = mutableMapOf<String, Double>()
     val pricesPerStock = mutableMapOf<String, MutableList<Double>>()
     for ((first, second) in stockPrices) {
-        if (first !in pricesPerStock.keys) {
+        if (first !in pricesPerStock) {
             pricesPerStock[first] = mutableListOf(second)
         } else {
             pricesPerStock[first]?.add(second)
@@ -270,7 +270,7 @@ fun findCheapestStuff(stuff: Map<String, Pair<String, Double>>, kind: String): S
  */
 fun canBuildFrom(chars: List<Char>, word: String): Boolean {
     var flag = true
-    val charsSet = chars.toSet().map { it -> it.lowercase() }
+    val charsSet = chars.map { it.lowercase() }.toSet()
     for (letter in word) {
         if (letter.lowercase() !in charsSet) {
             flag = false
@@ -319,9 +319,7 @@ fun hasAnagrams(words: List<String>): Boolean {
     val sets = mutableSetOf<Set<Char>>()
 
     for (i in words) {
-        if (i.toSet() !in sets) {
-            sets.add(i.toSet())
-        } else {
+        if (!sets.add(i.toSet())) {
             return true
         }
     }

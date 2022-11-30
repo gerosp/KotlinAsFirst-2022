@@ -169,18 +169,11 @@ fun mostExpensive(description: String): String {
     var mostExpensiveItem = ""
     var maxPrice = -Double.MIN_VALUE
     if (description == "") return ""
-    if (description.split("; ").isNotEmpty()) {
-        for (i in description.split("; ")) {
-            if (i.split(" ").size == 2) {
-                if (i.split(" ")[1].all { it.isDigit() || it == '.' }) {
-                    println(i.split(" ")[1].toDouble())
-                    if (i.split(" ")[1].toDouble() > maxPrice) {
-                        maxPrice = i.split(" ")[1].toDouble()
-                        mostExpensiveItem = i.split(" ")[0]
-                    }
-                } else return ""
-            } else return ""
-
+    if (Regex("^([а-яА-я]+\\s\\d+(.\\w+)?(;\\s)|$)+$").matches(description)) return ""
+    for (i in description.split("; ")) {
+        if (i.split(" ")[1].toDouble() > maxPrice) {
+            maxPrice = i.split(" ")[1].toDouble()
+            mostExpensiveItem = i.split(" ")[0]
         }
     }
     return mostExpensiveItem
@@ -246,9 +239,7 @@ fun fromRoman(roman: String): Int {
         reverseRomanTable[romanTable[i]!!] = i
     }
 
-    for (i in roman) {
-        if (i.toString() !in reverseRomanTable.keys) return -1
-    }
+    if (!Regex("M*(CM)*D*(CD)*C*(XC)*L*(XL)*X*(IX)*V*(IV)*I*").matches(roman)) return 0
     var shouldSkipDigit = false
     for (i in roman.indices) {
         if (shouldSkipDigit) {
@@ -328,7 +319,7 @@ fun parseLoops(commands: String): MutableList<Pair<Int, Int>> {
 fun computeDeviceCells(cells: Int, commands: String, limit: Int): List<Int> {
     var currentCell = cells / 2
     val cellsList = MutableList<Int>(cells) { 0 }
-    var loops = parseLoops(commands)
+    val loops = parseLoops(commands)
     var operationCount = 0
     var operation = 0
     var loopCount = 0
@@ -349,7 +340,7 @@ fun computeDeviceCells(cells: Int, commands: String, limit: Int): List<Int> {
                 throw IllegalStateException()
             }
             '[' -> if (cellsList[currentCell] == 0) {
-                for ((first, second) in loops) { // мда, линейный поиск
+                for ((first, second) in loops) {
                     if (first == operation) {
                         operation = second
                         break
@@ -357,7 +348,7 @@ fun computeDeviceCells(cells: Int, commands: String, limit: Int): List<Int> {
                 }
             }
             ']' -> if (cellsList[currentCell] != 0) {
-                for ((first, second) in loops) { // мда, линейный поиск
+                for ((first, second) in loops) {
                     if (second == operation) {
                         operation = first
                         break
