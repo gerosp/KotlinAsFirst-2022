@@ -491,7 +491,6 @@ fun markdownToHtmlLists(inputName: String, outputName: String) {
                 writer.write(spaces(currentIndent) + "<li>\n")
                 writer.write(spaces(currentIndent) + line.slice(line.indexOfFirst { it == '.' } + 1..line.lastIndex) + "\n") // Может вызвать исключение при строке "*" TODO: Исправить возможное исключение
                 tagStack.add("li")
-
             }
 
             else -> {
