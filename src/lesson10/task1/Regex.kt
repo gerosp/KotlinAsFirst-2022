@@ -85,7 +85,7 @@ sealed class Expression {
                 if (left.calculate(x) == 0) 1
                 var power = left.calculate(x)
                 for (i in 0 until right.calculate(x) - 1) {
-                    power *= x
+                    power *= left.calculate(x)
                 }
                 power
             }
@@ -137,7 +137,7 @@ class Parser(private val groups: List<String>) {
         check(pos < groups.size) { "Unexpected expression end" }
         return when (val group = groups[pos++]) {
             "x" -> Expression.Variable
-            "-" -> Expression.Negate(parseFactor())
+            "-" -> Expression.Negate(parseExponentiation())
             "(" -> {
                 val arg = parseExpression()
                 val next = groups[pos++]
