@@ -322,34 +322,8 @@ Suspendisse <s>et elit in enim tempus iaculis</s>.
  *
  * (Отступы и переносы строк в примере добавлены для наглядности, при решении задачи их реализовывать не обязательно)
  */
-fun markdownToHtmlSimple(inputName: String, outputName: String) { // Оно все равно не работает, можно удалять :)
-    val inputText = File(inputName).readLines()
-    val writer = File(outputName).bufferedWriter()
-    val tagStack = ArrayDeque<String>()
-    var htmlCode = ""
-    tagStack.add("html")
-    htmlCode += "<html>\n"
-    tagStack.add("body")
-    htmlCode += "<body>\n"
-    for (line in inputText) {
-        if ("p" !in tagStack) {
-            if (line.isNotEmpty())
-                tagStack.add("p")
-            htmlCode += "<p>\n"
-        }
-        when {
-            Regex("[^*]*[^*]]") in line -> {
-                line.split(Regex("[^*]*[^*]]"))
-            }
-        }
-
-    }
-    while (tagStack.isNotEmpty()) {
-        htmlCode += "</" + tagStack.last() + ">\n"
-        tagStack.removeLast()
-    }
-
-    writer.close()
+fun markdownToHtmlSimple(inputName: String, outputName: String) {
+    TODO()
 }
 
 /**
