@@ -133,82 +133,7 @@ fun countSubstrings(inputName: String, substrings: List<String>): Map<String, In
  *
  */
 fun sibilants(inputName: String, outputName: String) {
-    val writer = File(outputName).bufferedWriter()
-    var lineWritten = false
-    for (line in File(inputName).readLines()) {
-        var newLine = line
-        while ("жы" in newLine.lowercase() || "жя" in newLine.lowercase() || "жю" in newLine.lowercase()
-            || "чы" in newLine.lowercase() || "чя" in newLine.lowercase() || "чю" in newLine.lowercase()
-            || "шы" in newLine.lowercase() || "шя" in newLine.lowercase() || "шю" in newLine.lowercase()
-            || "щы" in newLine.lowercase() || "щя" in newLine.lowercase() || "щю" in newLine.lowercase()
-        ) {
-            when {
-                "жы" in newLine -> newLine = newLine.replace("жы", "жи")
-                "Жы" in newLine -> newLine = newLine.replace("Жы", "Жи")
-                "жЫ" in newLine -> newLine = newLine.replace("жЫ", "жИ")
-                "ЖЫ" in newLine -> newLine = newLine.replace("ЖЫ", "ЖИ")
-
-                "жя" in newLine -> newLine = newLine.replace("жя", "жа")
-                "Жя" in newLine -> newLine = newLine.replace("Жя", "Жа")
-                "жЯ" in newLine -> newLine = newLine.replace("жЯ", "жА")
-                "ЖЯ" in newLine -> newLine = newLine.replace("ЖЯ", "ЖА")
-
-                "жю" in newLine -> newLine = newLine.replace("жю", "жу")
-                "Жю" in newLine -> newLine = newLine.replace("Жю", "Жу")
-                "жЮ" in newLine -> newLine = newLine.replace("жЮ", "жУ")
-                "ЖЮ" in newLine -> newLine = newLine.replace("ЖЮ", "ЖУ")
-
-                "чы" in newLine -> newLine = newLine.replace("чы", "чи")
-                "Чы" in newLine -> newLine = newLine.replace("Чы", "Чи")
-                "чЫ" in newLine -> newLine = newLine.replace("чЫ", "чИ")
-                "ЧЫ" in newLine -> newLine = newLine.replace("ЧЫ", "ЧИ")
-
-                "чя" in newLine -> newLine = newLine.replace("чя", "ча")
-                "Чя" in newLine -> newLine = newLine.replace("Чя", "Ча")
-                "чЯ" in newLine -> newLine = newLine.replace("чЯ", "чА")
-                "ЧЯ" in newLine -> newLine = newLine.replace("ЧЯ", "ЧА")
-
-                "чю" in newLine -> newLine = newLine.replace("чю", "чу")
-                "Чю" in newLine -> newLine = newLine.replace("Чю", "Чу")
-                "чЮ" in newLine -> newLine = newLine.replace("чЮ", "чУ")
-                "ЧЮ" in newLine -> newLine = newLine.replace("ЧЮ", "ЧУ")
-
-                "шы" in newLine -> newLine = newLine.replace("шы", "ши")
-                "Шы" in newLine -> newLine = newLine.replace("Шы", "Ши")
-                "шЫ" in newLine -> newLine = newLine.replace("шЫ", "шИ")
-                "ШЫ" in newLine -> newLine = newLine.replace("ШЫ", "ШИ")
-
-                "шя" in newLine -> newLine = newLine.replace("шя", "ша")
-                "Шя" in newLine -> newLine = newLine.replace("Шя", "Ша")
-                "шЯ" in newLine -> newLine = newLine.replace("шЯ", "шА")
-                "ШЯ" in newLine -> newLine = newLine.replace("ШЯ", "ША")
-
-                "шю" in newLine -> newLine = newLine.replace("шю", "шу")
-                "Шю" in newLine -> newLine = newLine.replace("Шю", "Шу")
-                "шЮ" in newLine -> newLine = newLine.replace("шЮ", "шУ")
-                "ШЮ" in newLine -> newLine = newLine.replace("ШЮ", "ШУ")
-
-                "щы" in newLine -> newLine = newLine.replace("щы", "щи")
-                "Щы" in newLine -> newLine = newLine.replace("Щы", "Щи")
-                "щЫ" in newLine -> newLine = newLine.replace("щЫ", "щИ")
-                "ЩЫ" in newLine -> newLine = newLine.replace("ЩЫ", "ЩИ")
-
-                "щя" in newLine -> newLine = newLine.replace("щя", "ща")
-                "Щя" in newLine -> newLine = newLine.replace("Щя", "Ща")
-                "щЯ" in newLine -> newLine = newLine.replace("щЯ", "щА")
-                "ЩЯ" in newLine -> newLine = newLine.replace("ЩЯ", "ЩА")
-
-                "щю" in newLine -> newLine = newLine.replace("щю", "щу")
-                "Щю" in newLine -> newLine = newLine.replace("Щю", "Щу")
-                "щЮ" in newLine -> newLine = newLine.replace("щЮ", "щУ")
-                "ЩЮ" in newLine -> newLine = newLine.replace("ЩЮ", "ЩУ")
-            }
-            if (lineWritten) writer.newLine()
-            writer.write(newLine)
-            lineWritten = true
-        }
-    }
-    writer.close()
+    TODO()
 }
 
 /**
@@ -260,49 +185,7 @@ fun centerFile(inputName: String, outputName: String) {
  * 8) Если входной файл удовлетворяет требованиям 1-7, то он должен быть в точности идентичен выходному файлу
  */
 fun alignFileByWidth(inputName: String, outputName: String) {
-    var maxLineSize = -1
-    val writer = File(outputName).bufferedWriter()
-
-
-
-
-
-
-    for (line in File(inputName).readLines()) {
-        if (line.length > maxLineSize) maxLineSize = line.length
-    }
-    var centeredString = ""
-    var firstWrite = true
-    var words = mutableListOf<String>()
-    for (line in File(inputName).readLines()) {
-        if (!firstWrite) {
-            writer.newLine()
-        } else firstWrite = false
-        if (line.isNotEmpty()) {
-            if (maxLineSize - line.length > 0) {
-                centeredString = ""
-                words = line.split(Regex("[^а-яА-я\\w\\d().:]+|\\s+ ")).toMutableList()
-                for (i in words.indices) {
-                    if (i != 0 && i != words.size - 1) {
-                        centeredString += words[i]
-                        println(line)
-                        println(maxLineSize - line.length)
-                        println((maxLineSize - line.length) / (words.size - 2))
-                        println(words.size)
-                        for (j in 1..(maxLineSize - line.length) / (words.size - 2)) centeredString += " "
-                    } else {
-                        if (words[i] != "") centeredString += words[i]
-                    }
-                }
-                //println(words)
-                writer.write(centeredString)
-            } else {
-                writer.write(line)
-            }
-        } else writer.newLine()
-
-    }
-    writer.close()
+    TODO()
 }
 
 /**
