@@ -3,12 +3,8 @@
 package lesson7.task1
 
 
-import org.junit.Test.None
-import ru.spbstu.wheels.out
 import java.io.File
-import kotlin.contracts.ExperimentalContracts
-import kotlin.contracts.InvocationKind
-import kotlin.contracts.contract
+
 
 // Урок 7: работа с файлами
 // Урок интегральный, поэтому его задачи имеют сильно увеличенную стоимость
@@ -58,6 +54,7 @@ fun alignFile(inputName: String, lineLength: Int, outputName: String) {
     }
     writer.close()
 }
+
 
 /**
  * Простая (8 баллов)
@@ -497,7 +494,7 @@ fun markdownToHtmlLists(inputName: String, outputName: String) {
     for (line in inputText) {
         when (identifyListElement(line).first) {
             "bul" -> {
-                if (identifyListElement(line).second > currentIndent) { // По идее скачка не на 4 быть не должно
+                if (identifyListElement(line).second > currentIndent) {
                     currentIndent = identifyListElement(line).second
                     tagStack.add("ul")
                     writer.write("<ul>\n")
