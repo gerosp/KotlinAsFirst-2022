@@ -65,6 +65,7 @@ fun square(notation: String): Square {
  * Ладья может пройти через клетку (3, 3) или через клетку (6, 1) к клетке (6, 3).
  */
 fun rookMoveNumber(start: Square, end: Square): Int = when {
+    !start.inside() || !end.inside() -> throw IllegalArgumentException()
     start == end -> 0
     (start.row == end.row) xor (start.column == end.column) -> 1
     else -> 2
@@ -192,43 +193,44 @@ fun kingTrajectory(start: Square, end: Square): List<Square> = TODO()
  * Пример: knightMoveNumber(Square(3, 1), Square(6, 3)) = 3.
  * Конь может последовательно пройти через клетки (5, 2) и (4, 4) к клетке (6, 3).
  */
-fun knightFindNeighbours(sq: Square): List<Square> { // Функция поиска соседа для хода коня
+fun knightFindNeighbours(sq: Square): List<Square> {
     val neighbours = mutableListOf<Square>()
-    if (sq.column + 2 in 0..7 && sq.row + 1 in 1..7) {  // Вверх-вправо
+    if (sq.column + 2 in 0..7 && sq.row + 1 in 1..7) {
         neighbours.add(Square(sq.column + 2, sq.row + 1))
     }
-    if (sq.column + 2 in 0..7 && sq.row - 1 < 8 && sq.row - 1 >= 0) { // Вверх-влево
+    if (sq.column + 2 in 0..7 && sq.row - 1 < 8 && sq.row - 1 >= 0) {
         neighbours.add(Square(sq.column + 2, sq.row - 1))
     }
-    if (sq.column - 2 in 0..7 && sq.row + 1 < 8 && sq.row + 1 >= 0) { // Вниз-вправо
+    if (sq.column - 2 in 0..7 && sq.row + 1 < 8 && sq.row + 1 >= 0) {
         neighbours.add(Square(sq.column - 2, sq.row + 1))
     }
 
-    if (sq.column - 2 in 0..7 && sq.row - 1 < 8 && sq.row - 1 >= 0) { // Вниз-влево
+    if (sq.column - 2 in 0..7 && sq.row - 1 < 8 && sq.row - 1 >= 0) {
         neighbours.add(Square(sq.column - 2, sq.row - 1))
     }
-    // Вправо-вверх
-    if (sq.column + 1 in 0..7 && sq.row + 2 in 0..7) {  // Вверх-вправо
+
+    if (sq.column + 1 in 0..7 && sq.row + 2 in 0..7) {
         neighbours.add(Square(sq.column + 1, sq.row + 2))
     }
-    if (sq.column + 1 in 0..7 && sq.row - 2 < 8 && sq.row - 2 >= 0) { // Вверх-влево
+    if (sq.column + 1 in 0..7 && sq.row - 2 < 8 && sq.row - 2 >= 0) {
         neighbours.add(Square(sq.column + 1, sq.row - 2))
     }
-    if (sq.column - 1 in 0..7 && sq.row + 2 < 8 && sq.row + 2 >= 0) { // Вниз-вправо
+    if (sq.column - 1 in 0..7 && sq.row + 2 < 8 && sq.row + 2 >= 0) {
         neighbours.add(Square(sq.column - 1, sq.row + 2))
     }
-    if (sq.column - 1 in 0..7 && sq.row - 2 < 8 && sq.row - 2 >= 0) { // Вниз-влево
+    if (sq.column - 1 in 0..7 && sq.row - 2 < 8 && sq.row - 2 >= 0) {
         neighbours.add(Square(sq.column - 1, sq.row - 2))
     }
     return neighbours
 }
 
 fun knightMoves(start: Square, end: Square): MutableList<MutableList<Int>> {
+
     val field = MutableList(8) { MutableList(8) { -1 } }
     field[start.row - 1][start.column - 1] = 0
     var visitedSquares = 0
     var d = 0
-    while (field[end.row - 1][end.column - 1] == -1 && visitedSquares != 64) { // Добавить условие на возможность распространения волны
+    while (field[end.row - 1][end.column - 1] == -1 && visitedSquares != 64) {
         visitedSquares += 1
         for (i in field.indices) {
             for (j in field[i].indices) {
@@ -246,7 +248,10 @@ fun knightMoves(start: Square, end: Square): MutableList<MutableList<Int>> {
 }
 
 fun knightMoveNumber(start: Square, end: Square): Int =
-    knightMoves(start, end)[end.row - 1][end.column - 1]
+    if (start.inside() && end.inside()) knightMoves(
+        start,
+        end
+    )[end.row - 1][end.column - 1] else throw IllegalArgumentException()
 
 
 /**
@@ -270,7 +275,7 @@ fun knightMoveNumber(start: Square, end: Square): Int =
  * Если возможно несколько вариантов самой быстрой траектории, вернуть любой из них.
  */
 fun knightTrajectory(start: Square, end: Square): List<Square> {
-
+    if (!start.inside() || !end.inside()) throw IllegalArgumentException()
     val field = knightMoves(start, end).toMutableList()
 
     var d = field[end.row - 1][end.column - 1]

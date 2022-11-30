@@ -368,78 +368,7 @@ Suspendisse <s>et elit in enim tempus iaculis</s>.
  * (Отступы и переносы строк в примере добавлены для наглядности, при решении задачи их реализовывать не обязательно)
  */
 fun markdownToHtmlSimple(inputName: String, outputName: String) {
-    val inputText = File(inputName).readLines()
-    val writer = File(outputName).bufferedWriter()
-    val a: Int
-
-
-    val tagMap = mutableMapOf<String, Boolean>(
-        "p" to false,
-        "i" to false,
-        "b" to false,
-        "s" to false
-    )
-    writer.write("<html>\n<body>\n")
-    for (line in inputText) {
-        var sb = StringBuilder(line)
-        if (line.isEmpty()) {
-            if (tagMap["p"] == false) {
-                tagMap["p"] = true
-                writer.write("<p>\n")
-            } else {
-                tagMap["p"] = false
-                writer.write("</p>\n")
-            }
-        } else if (line.isNotEmpty() && tagMap["p"] == false) {
-            tagMap["p"] = true
-            writer.write("<p>\n")
-        }
-        var i = 0
-        while (i <= sb.lastIndex) {
-            if (i != sb.lastIndex) {
-                when {
-                    sb.toString()[i] == '*' && sb.toString()[i + 1] == '*' -> { // ** -> <b>
-                        sb.deleteCharAt(i) // удаляем символ i
-                        sb.deleteCharAt(i) // удаляем символ i+1
-                        if (tagMap["b"] == false) {
-                            sb.insert(i, "<b>")
-                            tagMap["b"] = true
-                        } else {
-                            sb.insert(i, "</b>")
-                            tagMap["b"] = false
-                        }
-                    }
-                    sb.toString()[i] == '*' -> { // * -> <i>
-                        sb.deleteCharAt(i)
-                        if (tagMap["i"] == false) {
-                            sb.insert(i, "<i>")
-                            tagMap["i"] = true
-                        } else {
-                            sb.insert(i, "</i>")
-                            tagMap["i"] = false
-                        }
-                    }
-                    sb.toString()[i] == '~' && sb.toString()[i + 1] == '~' -> { // ~~ -> <s>
-                        sb.deleteCharAt(i) // удаляем символ i
-                        sb.deleteCharAt(i) // удаляем символ i+1
-                        if (tagMap["s"] == false) {
-                            sb.insert(i, "<s>")
-                            tagMap["s"] = true
-                        } else {
-                            sb.insert(i, "</s>")
-                            tagMap["s"] = false
-                        }
-                    }
-                }
-            }
-            i++
-        }
-        writer.write(sb.toString())
-    }
-    if (tagMap["p"] == true) writer.write("</p>\n") // Закрываем тег <p>s, если необходимо
-
-    writer.write("</body>\n</html>\n")
-    writer.close()
+    TODO()
 }
 
 /**
