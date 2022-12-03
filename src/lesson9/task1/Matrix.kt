@@ -61,34 +61,34 @@ class MatrixImpl<E>(override val height: Int, override val width: Int, e: E) : M
 
     init {
         if (height <= 0 || width <= 0) throw IllegalArgumentException()
-        for (i in 0..height) {
+        for (i in 0..height-1) {
             cells.add(mutableListOf())
-            for (j in 0..width) {
+            for (j in 0..width-1) {
                 cells[i].add(e)
             }
         }
     }
 
     override fun get(row: Int, column: Int): E {
-        if (row < 0 || row >= height || column < 0 || column >= width) throw IndexOutOfBoundsException()
+        if (row < 0 || row > height || column < 0 || column > width) throw IndexOutOfBoundsException()
 
         return cells[row][column]
     }
 
     override fun get(cell: Cell): E {
-        if (cell.row < 0 || cell.row >= height || cell.column < 0 || cell.column >= width)
+        if (cell.row < 0 || cell.row > height || cell.column < 0 || cell.column > width)
             throw IndexOutOfBoundsException()
         return cells[cell.row][cell.column]
     }
 
     override fun set(row: Int, column: Int, value: E) {
-        if (row < 0 || row >= height || column < 0 || column >= width) throw IndexOutOfBoundsException()
+        if (row < 0 || row > height || column < 0 || column > width) throw IndexOutOfBoundsException()
         cells[row][column] =
             value
     }
 
     override fun set(cell: Cell, value: E) {
-        if (cell.row < 0 || cell.row >= height || cell.column < 0 || cell.column >= width)
+        if (cell.row < 0 || cell.row > height || cell.column < 0 || cell.column > width)
             throw IndexOutOfBoundsException()
         cells[cell.row][cell.column] = value
     }
@@ -110,7 +110,6 @@ class MatrixImpl<E>(override val height: Int, override val width: Int, e: E) : M
     }
 
     override fun toString(): String {
-        //ODO
         val sb = StringBuilder()
         for (i in cells.indices) {
             for (j in cells[i].indices) {
