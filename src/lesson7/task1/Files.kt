@@ -3,12 +3,8 @@
 package lesson7.task1
 
 
-import org.junit.Test.None
-import ru.spbstu.wheels.out
 import java.io.File
-import kotlin.contracts.ExperimentalContracts
-import kotlin.contracts.InvocationKind
-import kotlin.contracts.contract
+
 
 // Урок 7: работа с файлами
 // Урок интегральный, поэтому его задачи имеют сильно увеличенную стоимость
@@ -58,6 +54,7 @@ fun alignFile(inputName: String, lineLength: Int, outputName: String) {
     }
     writer.close()
 }
+
 
 /**
  * Простая (8 баллов)
@@ -188,49 +185,7 @@ fun centerFile(inputName: String, outputName: String) {
  * 8) Если входной файл удовлетворяет требованиям 1-7, то он должен быть в точности идентичен выходному файлу
  */
 fun alignFileByWidth(inputName: String, outputName: String) {
-    var maxLineSize = -1
-    val writer = File(outputName).bufferedWriter()
-
-
-
-
-
-
-    for (line in File(inputName).readLines()) {
-        if (line.length > maxLineSize) maxLineSize = line.length
-    }
-    var centeredString = ""
-    var firstWrite = true
-    var words = mutableListOf<String>()
-    for (line in File(inputName).readLines()) {
-        if (!firstWrite) {
-            writer.newLine()
-        } else firstWrite = false
-        if (line.isNotEmpty()) {
-            if (maxLineSize - line.length > 0) {
-                centeredString = ""
-                words = line.split(Regex("[^а-яА-я\\w\\d().:]+|\\s+ ")).toMutableList()
-                for (i in words.indices) {
-                    if (i != 0 && i != words.size - 1) {
-                        centeredString += words[i]
-                        println(line)
-                        println(maxLineSize - line.length)
-                        println((maxLineSize - line.length) / (words.size - 2))
-                        println(words.size)
-                        for (j in 1..(maxLineSize - line.length) / (words.size - 2)) centeredString += " "
-                    } else {
-                        if (words[i] != "") centeredString += words[i]
-                    }
-                }
-                //println(words)
-                writer.write(centeredString)
-            } else {
-                writer.write(line)
-            }
-        } else writer.newLine()
-
-    }
-    writer.close()
+    TODO()
 }
 
 /**
@@ -368,78 +323,7 @@ Suspendisse <s>et elit in enim tempus iaculis</s>.
  * (Отступы и переносы строк в примере добавлены для наглядности, при решении задачи их реализовывать не обязательно)
  */
 fun markdownToHtmlSimple(inputName: String, outputName: String) {
-    val inputText = File(inputName).readLines()
-    val writer = File(outputName).bufferedWriter()
-    val a: Int
-
-
-    val tagMap = mutableMapOf<String, Boolean>(
-        "p" to false,
-        "i" to false,
-        "b" to false,
-        "s" to false
-    )
-    writer.write("<html>\n<body>\n")
-    for (line in inputText) {
-        var sb = StringBuilder(line)
-        if (line.isEmpty()) {
-            if (tagMap["p"] == false) {
-                tagMap["p"] = true
-                writer.write("<p>\n")
-            } else {
-                tagMap["p"] = false
-                writer.write("</p>\n")
-            }
-        } else if (line.isNotEmpty() && tagMap["p"] == false) {
-            tagMap["p"] = true
-            writer.write("<p>\n")
-        }
-        var i = 0
-        while (i <= sb.lastIndex) {
-            if (i != sb.lastIndex) {
-                when {
-                    sb.toString()[i] == '*' && sb.toString()[i + 1] == '*' -> { // ** -> <b>
-                        sb.deleteCharAt(i) // удаляем символ i
-                        sb.deleteCharAt(i) // удаляем символ i+1
-                        if (tagMap["b"] == false) {
-                            sb.insert(i, "<b>")
-                            tagMap["b"] = true
-                        } else {
-                            sb.insert(i, "</b>")
-                            tagMap["b"] = false
-                        }
-                    }
-                    sb.toString()[i] == '*' -> { // * -> <i>
-                        sb.deleteCharAt(i)
-                        if (tagMap["i"] == false) {
-                            sb.insert(i, "<i>")
-                            tagMap["i"] = true
-                        } else {
-                            sb.insert(i, "</i>")
-                            tagMap["i"] = false
-                        }
-                    }
-                    sb.toString()[i] == '~' && sb.toString()[i + 1] == '~' -> { // ~~ -> <s>
-                        sb.deleteCharAt(i) // удаляем символ i
-                        sb.deleteCharAt(i) // удаляем символ i+1
-                        if (tagMap["s"] == false) {
-                            sb.insert(i, "<s>")
-                            tagMap["s"] = true
-                        } else {
-                            sb.insert(i, "</s>")
-                            tagMap["s"] = false
-                        }
-                    }
-                }
-            }
-            i++
-        }
-        writer.write(sb.toString())
-    }
-    if (tagMap["p"] == true) writer.write("</p>\n") // Закрываем тег <p>s, если необходимо
-
-    writer.write("</body>\n</html>\n")
-    writer.close()
+    TODO()
 }
 
 /**
@@ -568,7 +452,7 @@ fun markdownToHtmlLists(inputName: String, outputName: String) {
     for (line in inputText) {
         when (identifyListElement(line).first) {
             "bul" -> {
-                if (identifyListElement(line).second > currentIndent) { // По идее скачка не на 4 быть не должно
+                if (identifyListElement(line).second > currentIndent) {
                     currentIndent = identifyListElement(line).second
                     tagStack.add("ul")
                     writer.write("<ul>\n")

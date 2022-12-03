@@ -216,7 +216,23 @@ operator fun Matrix<Int>.times(other: Matrix<Int>): Matrix<Int> = TODO(this.toSt
  * Вернуть тройку (Triple) -- (да/нет, требуемый сдвиг по высоте, требуемый сдвиг по ширине).
  * Если наложение невозможно, то первый элемент тройки "нет" и сдвиги могут быть любыми.
  */
-fun canOpenLock(key: Matrix<Int>, lock: Matrix<Int>): Triple<Boolean, Int, Int> = TODO()
+fun canOpenLock(key: Matrix<Int>, lock: Matrix<Int>): Triple<Boolean, Int, Int> {
+    for (xOffset in 0..lock.width - key.width) {
+        for (yOffset in 0..lock.height - key.height) {
+            var opens = true
+            for (x in 0 until key.width) {
+                for (y in 0 until key.height) {
+                    if (lock[yOffset + y, xOffset + x] == key[y, x]) {
+                        opens = false
+                        break
+                    }
+                }
+            }
+            if (opens) return Triple(true, yOffset, xOffset)
+        }
+    }
+    return Triple(false, -1, -1)
+}
 
 /**
  * Сложная (8 баллов)
@@ -245,7 +261,47 @@ fun canOpenLock(key: Matrix<Int>, lock: Matrix<Int>): Triple<Boolean, Int, Int> 
  * 0  4 13  6
  * 3 10 11  8
  */
-fun fifteenGameMoves(matrix: Matrix<Int>, moves: List<Int>): Matrix<Int> = TODO()
+
+
+fun findNeighbor(matrix: Matrix<Int>, cell: Pair<Int, Int>, value: Int): Pair<Int, Int>? {
+    var result: Pair<Int, Int>? = null
+    val maxCoord = 4
+    if (cell.first + 1 < maxCoord && matrix[cell.second, cell.first + 1] == value) result =
+        Pair(cell.first + 1, cell.second)
+    if (cell.first - 1 >= 0 && matrix[cell.second, cell.first - 1] == value) result =
+        Pair(cell.first - 1, cell.second)
+    if (cell.second + 1 < maxCoord && matrix[cell.second + 1, cell.first] == value) result =
+        Pair(cell.first, cell.second + 1)
+    if (cell.second - 1 >= 0 && matrix[cell.second - 1, cell.first] == value) result =
+        Pair(cell.first, cell.second - 1)
+    return result
+}
+
+fun swap(matrix: Matrix<Int>, a: Pair<Int, Int>, b: Pair<Int, Int>) {
+    var temp = 0
+    temp = matrix[a.second, a.first]
+    matrix[a.second, a.first] = matrix[b.second, b.first]
+    matrix[b.second, b.first] = temp
+}
+
+fun fifteenGameMoves(matrix: Matrix<Int>, moves: List<Int>): Matrix<Int> {
+    var zero = Pair(-1, -1)
+    for (column in 0..3) {
+        for (row in 0..3) {
+            if (matrix[row, column] == 0) zero =
+                Pair(column, row)
+        }
+    }
+    if (zero.first == -1 || zero.second == -1) throw IllegalStateException()
+    for (move in moves) {
+        if (findNeighbor(matrix, zero, move) != null) {
+            val swapTarget = findNeighbor(matrix, zero, move)!!
+            swap(matrix, zero, swapTarget)
+            zero = swapTarget
+        } else throw IllegalStateException()
+    }
+    return matrix
+}
 
 /**
  * Очень сложная (32 балла)

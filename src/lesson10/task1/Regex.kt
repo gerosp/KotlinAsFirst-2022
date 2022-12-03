@@ -84,8 +84,8 @@ sealed class Expression {
             POW -> {
                 if (left.calculate(x) == 0) 1
                 var power = left.calculate(x)
-                for (i in 0..right.calculate(x)) {
-                    power *= x
+                for (i in 0 until right.calculate(x) - 1) {
+                    power *= left.calculate(x)
                 }
                 power
             }
@@ -137,7 +137,7 @@ class Parser(private val groups: List<String>) {
         check(pos < groups.size) { "Unexpected expression end" }
         return when (val group = groups[pos++]) {
             "x" -> Expression.Variable
-            "-" -> Expression.Negate(parseFactor())
+            "-" -> Expression.Negate(parseExponentiation())
             "(" -> {
                 val arg = parseExpression()
                 val next = groups[pos++]
@@ -156,7 +156,7 @@ class Parser(private val groups: List<String>) {
      * Кроме написания этой функции, вам придётся вызвать её в одной или двух
      * предыдущих функциях парсера, и поддержать операцию POW внутри функции calculate.
      */
-    internal fun parseExponentiation(): Expression {
+    private fun parseExponentiation(): Expression {
         var left = parseFactor()
         while (pos < groups.size) {
             when (val op = operationMap[groups[pos]]) {
