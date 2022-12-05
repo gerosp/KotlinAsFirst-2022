@@ -35,8 +35,6 @@ interface Matrix<E> {
     operator fun set(row: Int, column: Int, value: E)
 
     operator fun set(cell: Cell, value: E)
-
-    fun clone(): Matrix<E> // Нужно для возмонжости копирования матрицы
 }
 
 /**
@@ -134,7 +132,7 @@ class MatrixImpl<E>(override val height: Int, override val width: Int, e: E) : M
         cells = newCells.toMutableList()
     }
 
-    override fun clone(): MatrixImpl<E> = MatrixImpl<E>(cells.map { it.toMutableList() }, cells[0][0])
+    fun clone(): MatrixImpl<E> = MatrixImpl<E>(cells.map { it.toMutableList() }, cells[0][0])
 
 }
 

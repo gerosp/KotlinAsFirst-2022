@@ -3,6 +3,7 @@
 package lesson9.task2
 
 import lesson9.task1.Matrix
+import lesson9.task1.MatrixImpl
 import lesson9.task1.createMatrix
 import java.util.*
 import kotlin.math.abs
@@ -435,7 +436,7 @@ class GameState(
 
 // Функция меняет местами два числа на игровом поле, отдает копию игрового поля
 fun swapCopy(inputMatrix: Matrix<Int>, a: Pair<Int, Int>, b: Pair<Int, Int>): Matrix<Int> {
-    val matrix = inputMatrix.clone()
+    val matrix = (inputMatrix as MatrixImpl<Int>).clone() // Этот костыль тут потому, что нельзя изменять интерфейс в задании
     val temp = matrix[a.second, a.first]
     matrix[a.second, a.first] = matrix[b.second, b.first]
     matrix[b.second, b.first] = temp
