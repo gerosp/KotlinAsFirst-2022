@@ -4,6 +4,9 @@ package lesson9.task2
 
 import lesson9.task1.Matrix
 import lesson9.task1.createMatrix
+import java.util.*
+import kotlin.math.abs
+import kotlin.math.min
 
 // Все задачи в этом файле требуют наличия реализации интерфейса "Матрица" в Matrix.kt
 
@@ -342,4 +345,188 @@ fun fifteenGameMoves(matrix: Matrix<Int>, moves: List<Int>): Matrix<Int> {
  *
  * Перед решением этой задачи НЕОБХОДИМО решить предыдущую
  */
-fun fifteenGameSolution(matrix: Matrix<Int>): List<Int> = TODO()
+class GameState(
+    val field: Matrix<Int>, // Поле игры
+    val turns: Int, // Количество ходов от начала игры до этого состояния
+    val path: IntArray, // Путь до состояния
+    var distance: Int = -1, // Сумма манхэттанских расстояний состояния
+    var zeroPosition: Pair<Int, Int> = Pair(-1, -1) // Позиция нуля на игровом поле
+) {
+
+    init {
+        if (distance == -1) distance = calculateDistance()
+        if (zeroPosition == Pair(-1, -1)) zeroPosition = findZero()
+    }
+
+    val weight = distance// Можно было бы использовать distance + turns, как предполагается в A*
+
+    // Поиск нуля на игровом поле
+    private fun findZero(): Pair<Int, Int> {
+        var zero = Pair(-1, -1)
+        for (column in 0 until field.width) {
+            for (row in 0 until field.height) {
+                if (field[row, column] == 0) zero = Pair(column, row) // я без понятия почему так
+            }
+        }
+        return zero
+    }
+
+    // Рассчет суммы манхэттанских расстойний в данном состоянии
+    private fun calculateDistance(): Int {
+        var fieldDistance = 0
+        for (column in 0 until field.width) {
+            for (row in 0 until field.height) {
+                if (field[row, column] !in setOf(0, 14, 15)) { // не учитываем 0
+                    fieldDistance += abs(row - (field[row, column] - 1) / 4) + abs(column - (field[row, column] - 1) % 4)
+                } else if (field[row, column] == 14 || field[row, column] == 15) fieldDistance += min( // берем минимальную дистанцию для 14 и 15 из двух вариантов
+                    abs(row - 3) + abs(
+                        column - 2
+                    ), abs(row - 3) + abs(column - 1)
+                )
+            }
+        }
+        return fieldDistance
+    }
+
+    // Дистанция для одной точки в текущей позиции
+    fun calculateDistanceSingle(pos: Pair<Int, Int>): Int {
+        var newDistance = 0
+        if (field[pos.second, pos.first] !in setOf(0, 14, 15)) { // не учитываем 0
+            newDistance =
+                abs(pos.second - (field[pos.second, pos.first] - 1) / 4) + abs(pos.first - (field[pos.second, pos.first] - 1) % 4)
+        } else if (field[pos.second, pos.first] == 14 || field[pos.second, pos.first] == 15) newDistance =
+            min( // берем минимальную дистанцию для 14 и 15 из двух вариантов
+                abs(pos.second - 3) + abs(
+                    pos.first - 2
+                ), abs(pos.second - 3) + abs(pos.first - 1)
+            )
+        return newDistance
+    }
+
+    // Дистанция для данного значения в данной позиции
+    fun calculateDistanceSingle(pos: Pair<Int, Int>, value: Int): Int {
+        var newDistance = 0
+        if (value !in setOf(0, 14, 15)) { // не учитываем 0
+            newDistance =
+                abs(pos.second - (value - 1) / 4) + abs(pos.first - (value - 1) % 4)
+        } else if (value == 14 || value == 15) newDistance =
+            min( // берем минимальную дистанцию для 14 и 15 из двух вариантов
+                abs(pos.second - 3) + abs(
+                    pos.first - 2
+                ), abs(pos.second - 3) + abs(pos.first - 1)
+            )
+        return newDistance
+    }
+
+    override fun equals(other: Any?): Boolean { // Чтобы не сравнивало объекты по ссылке
+        if (other is GameState) {
+            return field == other.field
+        }
+        return false
+    }
+
+    override fun hashCode(): Int {
+        var result = field.hashCode()
+        result = 31 * result + distance
+        result = 31 * result + zeroPosition.hashCode()
+        return result
+    }
+}
+
+// Функция меняет местами два числа на игровом поле, отдает копию игрового поля
+fun swapCopy(inputMatrix: Matrix<Int>, a: Pair<Int, Int>, b: Pair<Int, Int>): Matrix<Int> {
+    val matrix = inputMatrix.clone()
+    val temp = matrix[a.second, a.first]
+    matrix[a.second, a.first] = matrix[b.second, b.first]
+    matrix[b.second, b.first] = temp
+    return matrix
+}
+
+// Функция нахождения игровых состояний, в которые можно попасть из текущего
+fun getNeighbours(current: GameState): Set<GameState> {
+    val pos = current.zeroPosition
+    val outcomes = mutableSetOf<GameState>()
+    val maxCoord = 4
+    var previousDistance: Int
+    if (pos.first + 1 < maxCoord) {
+        previousDistance = current.calculateDistanceSingle(Pair(pos.first + 1, pos.second))
+        outcomes.add(
+            GameState(
+                swapCopy(current.field, pos, Pair(pos.first + 1, pos.second)),
+                current.turns + 1,
+                current.path + current.field[pos.second, pos.first + 1],
+                zeroPosition = Pair(pos.first + 1, pos.second),
+//                distance = current.distance + previousDistance - current.calculateDistanceSingle( // Эта оптимизация не работает, пока отключил
+//                    pos,
+//                    current.field[pos.second, pos.first + 1]
+//                )
+            )
+        )
+    }
+    if (pos.first - 1 >= 0) {
+        previousDistance = current.calculateDistanceSingle(Pair(pos.first - 1, pos.second))
+        outcomes.add(
+            GameState(
+                swapCopy(current.field, pos, Pair(pos.first - 1, pos.second)),
+                current.turns + 1,
+                current.path + current.field[pos.second, pos.first - 1],
+                zeroPosition = Pair(pos.first - 1, pos.second),
+//                distance = current.distance + previousDistance - current.calculateDistanceSingle(
+//                    pos,
+//                    current.field[pos.second, pos.first - 1]
+//                )
+            )
+        )
+    }
+    if (pos.second + 1 < maxCoord) {
+        previousDistance = current.calculateDistanceSingle(Pair(pos.first, pos.second + 1))
+        outcomes.add(
+            GameState(
+                swapCopy(current.field, pos, Pair(pos.first, pos.second + 1)),
+                current.turns + 1,
+                current.path + current.field[pos.second + 1, pos.first],
+                zeroPosition = Pair(pos.first, pos.second + 1),
+//                distance = current.distance + previousDistance - current.calculateDistanceSingle(
+//                    pos,
+//                    current.field[pos.second + 1, pos.first]
+//                )
+            )
+        )
+    }
+    if (pos.second - 1 >= 0) {
+        previousDistance = current.calculateDistanceSingle(Pair(pos.first, pos.second - 1))
+        outcomes.add(
+            GameState(
+                swapCopy(current.field, pos, Pair(pos.first, pos.second - 1)),
+                current.turns + 1,
+                current.path + current.field[pos.second - 1, pos.first],
+                zeroPosition = Pair(pos.first, pos.second - 1),
+//                distance = current.distance + previousDistance - current.calculateDistanceSingle(
+//                    pos,
+//                    current.field[pos.second - 1, pos.first]
+//                )
+            )
+        )
+    }
+    return outcomes
+}
+
+fun fifteenGameSolution(matrix: Matrix<Int>): List<Int> {
+    val weightComparator = compareBy<GameState> { it.weight }
+    val q = PriorityQueue(weightComparator)
+    q.add(GameState(matrix, 0, IntArray(0))) // Вес рассчитывается самостоятельно функцией
+    val visited = mutableSetOf<GameState>()
+    var current: GameState
+    while (q.isNotEmpty()) {
+        current = q.poll()
+        if (current in visited) continue
+
+        visited.add(current)
+        if (current.distance == 0) return current.path.toList()
+
+        for (nextMove in getNeighbours(current)) {
+            q.add(nextMove)
+        }
+    }
+    return listOf()
+}

@@ -35,6 +35,8 @@ interface Matrix<E> {
     operator fun set(row: Int, column: Int, value: E)
 
     operator fun set(cell: Cell, value: E)
+
+    fun clone(): Matrix<E> // Нужно для возмонжости копирования матрицы
 }
 
 /**
@@ -61,9 +63,9 @@ class MatrixImpl<E>(override val height: Int, override val width: Int, e: E) : M
 
     init {
         if (height <= 0 || width <= 0) throw IllegalArgumentException()
-        for (i in 0..height-1) {
+        for (i in 0..height - 1) {
             cells.add(mutableListOf())
-            for (j in 0..width-1) {
+            for (j in 0..width - 1) {
                 cells[i].add(e)
             }
         }
@@ -126,5 +128,13 @@ class MatrixImpl<E>(override val height: Int, override val width: Int, e: E) : M
         result = 31 * result + width
         return result
     }
+
+    // Код ниже нужен для копирования матриц в решении пятнашек
+    private constructor(newCells: List<MutableList<E>>, e: E) : this(newCells.size, newCells[0].size, e) {
+        cells = newCells.toMutableList()
+    }
+
+    override fun clone(): MatrixImpl<E> = MatrixImpl<E>(cells.map { it.toMutableList() }, cells[0][0])
+
 }
 
