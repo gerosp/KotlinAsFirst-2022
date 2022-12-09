@@ -163,15 +163,8 @@ fun subtractOf(a: MutableMap<String, String>, b: Map<String, String>) {
  * В выходном списке не должно быть повторяющихся элементов,
  * т. е. whoAreInBoth(listOf("Марат", "Семён, "Марат"), listOf("Марат", "Марат")) == listOf("Марат")
  */
-fun whoAreInBoth(a: List<String>, b: List<String>): List<String> {
-    val intersection = mutableSetOf<String>()
-    for (i in a) {
-        if (i in b && i !in intersection) {
-            intersection.add(i)
-        }
-    }
-    return intersection.toList()
-}
+fun whoAreInBoth(a: List<String>, b: List<String>): List<String> =
+    a.intersect(b.toSet()).toList() // Решил, что будет попроще просто переписать заново в одну строчку
 
 /**
  * Средняя (3 балла)
@@ -269,14 +262,13 @@ fun findCheapestStuff(stuff: Map<String, Pair<String, Double>>, kind: String): S
  *   canBuildFrom(listOf('a', 'b', 'o'), "baobab") -> true
  */
 fun canBuildFrom(chars: List<Char>, word: String): Boolean {
-    var flag = true
-    val charsSet = chars.map { it -> it.lowercase() }.toSet()
+    val charsSet = chars.map { it.lowercase() }.toSet()
     for (letter in word) {
         if (letter.lowercase() !in charsSet) {
-            flag = false
+            return false
         }
     }
-    return flag
+    return true
 }
 
 /**

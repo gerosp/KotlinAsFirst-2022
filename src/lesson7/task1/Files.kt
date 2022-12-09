@@ -100,7 +100,7 @@ fun countSubstrings(inputName: String, substrings: List<String>): Map<String, In
         val l = i.lowercase()
         currentSubstringCount = 0
         for (j in str.indices) {
-            if (str[j].toString() == l[0].lowercase()) {
+            if (str[j] == l[0]) {
                 var flag = true
                 if (j + l.length - 1 < str.length) {
                     for (k in l.indices) {
