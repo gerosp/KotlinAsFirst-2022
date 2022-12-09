@@ -2,6 +2,9 @@
 
 package lesson6.task1
 
+import java.util.*
+import javax.print.DocFlavor.STRING
+
 // Урок 6: разбор строк, исключения
 // Максимальное количество баллов = 13
 // Рекомендуемое количество баллов = 11
@@ -102,7 +105,11 @@ fun dateDigitToStr(digital: String): String = TODO()
  *
  * PS: Дополнительные примеры работы функции можно посмотреть в соответствующих тестах.
  */
-fun flattenPhoneNumber(phone: String): String = TODO()
+fun flattenPhoneNumber(phone: String): String =
+    if (Regex("^(\\+\\d+)?[\\s-]*(\\([\\d\\s-]+\\))?[\\d-\\s]+\$")
+            .matches(phone)
+    ) phone.filter { it -> it.isDigit() || it == '+' } else ""
+
 
 /**
  * Средняя (5 баллов)
@@ -114,7 +121,11 @@ fun flattenPhoneNumber(phone: String): String = TODO()
  * Прочитать строку и вернуть максимальное присутствующее в ней число (717 в примере).
  * При нарушении формата входной строки или при отсутствии в ней чисел, вернуть -1.
  */
-fun bestLongJump(jumps: String): Int = TODO()
+fun bestLongJump(jumps: String): Int =
+    if (!Regex("^[\\d\\-\\s%]+$").matches(jumps)) -1 else Regex("\\d+")
+        .findAll(jumps)
+        .maxOfOrNull { it.value.toInt() }
+        ?: -1
 
 /**
  * Сложная (6 баллов)
@@ -127,7 +138,11 @@ fun bestLongJump(jumps: String): Int = TODO()
  * При нарушении формата входной строки, а также в случае отсутствия удачных попыток,
  * вернуть -1.
  */
-fun bestHighJump(jumps: String): Int = TODO()
+fun bestHighJump(jumps: String): Int =
+    if (!Regex("^[+\\d\\-\\s%]+$").matches(jumps)) -1
+    else Regex("\\d+\\s%*\\+").findAll(jumps)
+        .maxOfOrNull { it.value.split(" ")[0].toInt() }
+        ?: -1
 
 /**
  * Сложная (6 баллов)
@@ -162,7 +177,19 @@ fun firstDuplicateIndex(str: String): Int = TODO()
  * или пустую строку при нарушении формата строки.
  * Все цены должны быть больше нуля либо равны нулю.
  */
-fun mostExpensive(description: String): String = TODO()
+fun mostExpensive(description: String): String {
+    var mostExpensiveItem = ""
+    var maxPrice = -Double.MIN_VALUE
+    if (description == "") return ""
+    if (Regex("^([а-яА-я]+\\s\\d+(.\\w+)?(;\\s)|$)+$").matches(description)) return ""
+    for (i in description.split("; ")) {
+        if (i.split(" ")[1].toDouble() > maxPrice) {
+            maxPrice = i.split(" ")[1].toDouble()
+            mostExpensiveItem = i.split(" ")[0]
+        }
+    }
+    return mostExpensiveItem
+}
 
 /**
  * Сложная (6 баллов)
@@ -175,7 +202,79 @@ fun mostExpensive(description: String): String = TODO()
  *
  * Вернуть -1, если roman не является корректным римским числом
  */
-fun fromRoman(roman: String): Int = TODO()
+
+
+/**
+ * Идем по одному символу
+ * Если левый символ меньше следующего, то +=следующий - предыдущий
+ * Используем тот же самый список из прямой задачи, только инвертированный
+ */
+fun fromRoman(roman: String): Int {
+    var n = 0
+    if (roman == "") return -1
+    val reverseRomanTable = mutableMapOf<String, Int>()
+    val romanTable = mapOf(
+        0 to "",
+        1 to "I",
+        2 to "II",
+        3 to "III",
+        4 to "IV",
+        5 to "V",
+        6 to "VI",
+        7 to "VII",
+        8 to "VIII",
+        9 to "IX",
+        10 to "X",
+        20 to "XX",
+        30 to "XXX",
+        40 to "XL",
+        50 to "L",
+        60 to "LX",
+        70 to "LXX",
+        80 to "LXXX",
+        90 to "XC",
+        100 to "C",
+        200 to "CC",
+        300 to "CCC",
+        400 to "CD",
+        500 to "D",
+        600 to "DC",
+        700 to "DCC",
+        800 to "DCCC",
+        900 to "CM",
+        1000 to "M",
+        2000 to "MM",
+        3000 to "MMM",
+        4000 to "MMMM"
+    )
+    for (i in romanTable.keys) {
+        reverseRomanTable[romanTable[i]!!] = i
+    }
+
+    for (i in roman) {
+        if (i.toString() !in reverseRomanTable.keys) return -1
+    }
+    var shouldSkipDigit = false
+    for (i in roman.indices) {
+        if (shouldSkipDigit) {
+            shouldSkipDigit = false
+            continue
+        }
+        if (i < roman.length - 1) {
+
+            if (reverseRomanTable[roman[i].toString()]!! < reverseRomanTable[roman[i + 1].toString()]!!) {
+                if (reverseRomanTable[roman[i + 1].toString()]!! / reverseRomanTable[roman[i].toString()]!! > 10) return -1
+                n += reverseRomanTable[roman[i + 1].toString()]!! - reverseRomanTable[roman[i].toString()]!!
+                shouldSkipDigit = true
+            } else {
+                n += reverseRomanTable[roman[i].toString()]!!
+            }
+        } else {
+            n += reverseRomanTable[roman[i].toString()]!!
+        }
+    }
+    return n
+}
 
 /**
  * Очень сложная (7 баллов)
@@ -213,4 +312,67 @@ fun fromRoman(roman: String): Int = TODO()
  * IllegalArgumentException должен бросаться даже если ошибочная команда не была достигнута в ходе выполнения.
  *
  */
-fun computeDeviceCells(cells: Int, commands: String, limit: Int): List<Int> = TODO()
+fun parseLoops(commands: String): MutableList<Pair<Int, Int>> {
+    val pairs = mutableListOf<Pair<Int, Int>>()
+    val loopStack = ArrayDeque<Int>()
+    for (commandIndex in commands.indices) {
+        when (commands[commandIndex]) {
+            '[' -> loopStack.push(commandIndex)
+            ']' -> if (loopStack.isNotEmpty()) {
+                pairs.add(Pair<Int, Int>(loopStack.pop(), commandIndex))
+
+            } else {
+                throw IllegalArgumentException()
+            }
+        }
+    }
+    if (loopStack.isNotEmpty()) throw IllegalArgumentException()
+    return pairs
+}
+
+fun computeDeviceCells(cells: Int, commands: String, limit: Int): List<Int> {
+    var currentCell = cells / 2
+    val cellsList = MutableList<Int>(cells) { 0 }
+    val loops = parseLoops(commands)
+    var operationCount = 0
+    var operation = 0
+    var loopCount = 0
+    while (operation < commands.length) {
+        operationCount++
+        if (operationCount > limit) break
+        when (commands[operation]) {
+            '+' -> cellsList[currentCell] += 1
+            '-' -> cellsList[currentCell] -= 1
+            '>' -> if (currentCell + 1 < cells) {
+                currentCell += 1
+            } else {
+                throw IllegalStateException()
+            }
+            '<' -> if (currentCell - 1 >= 0) {
+                currentCell -= 1
+            } else {
+                throw IllegalStateException()
+            }
+            '[' -> if (cellsList[currentCell] == 0) {
+                for ((first, second) in loops) {
+                    if (first == operation) {
+                        operation = second
+                        break
+                    }
+                }
+            }
+            ']' -> if (cellsList[currentCell] != 0) {
+                for ((first, second) in loops) {
+                    if (second == operation) {
+                        operation = first
+                        break
+                    }
+                }
+            }
+            ' ' -> {}
+            else -> throw IllegalArgumentException()
+        }
+        operation++
+    }
+    return cellsList
+}
