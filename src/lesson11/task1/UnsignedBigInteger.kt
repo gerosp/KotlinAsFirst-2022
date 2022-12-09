@@ -260,4 +260,8 @@ class UnsignedBigInteger : Comparable<UnsignedBigInteger> {
         if (array.dropLastWhile { it == 0 }.isNotEmpty()) array.dropLastWhile { it == 0 }
             .toIntArray() else IntArray(1) { 0 }
 
+    override fun hashCode(): Int {
+        return numbers.contentHashCode()
+    }
+
 }
