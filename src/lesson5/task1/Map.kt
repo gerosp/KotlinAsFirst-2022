@@ -150,7 +150,7 @@ fun containsIn(a: Map<String, String>, b: Map<String, String>): Boolean {
  */
 fun subtractOf(a: MutableMap<String, String>, b: Map<String, String>) {
     for (i in b.keys) {
-        if (a[i] != null && a[i] == b[i]) {
+        if (a[i] != null && a[i] == b[i] && b[i] != null) {
             a.remove(i)
         }
     }
